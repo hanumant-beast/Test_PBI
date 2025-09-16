@@ -1,0 +1,50 @@
+table 'Traffic Quality Parameter'
+	lineageTag: 2835e804-3f78-4314-95c7-70b22ab463e1
+
+	column 'Traffic Quality Parameter'
+		lineageTag: b3d6c6f4-4f4c-4886-a231-929f7b129ecb
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Traffic Quality Parameter Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Traffic Quality Parameter Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Traffic Quality Parameter Fields'
+		isHidden
+		lineageTag: 793d1f48-5f20-4c73-97dd-752790e357b4
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Traffic Quality Parameter Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Traffic Quality Parameter Order'
+		isHidden
+		formatString: 0
+		lineageTag: cf6a76eb-ddc2-44c0-8e8b-872b69ec197d
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Traffic Quality Parameter' = calculated
+		mode: import
+		source =
+				{
+				    ("Initial Attempted", NAMEOF('order_details'[Initial Attempted]), 0),
+				    ("Initial Approved", NAMEOF('order_details'[Initials]), 1),
+				    ("Rebill Attempt", NAMEOF('order_details'[Rebills Attempted]), 2),
+				    ("Rebill Approved", NAMEOF('order_details'[Rebills Approved]), 3)
+				}
+
+	annotation PBI_Id = 3720c6a36c634831aab8ef4cd785851b
+

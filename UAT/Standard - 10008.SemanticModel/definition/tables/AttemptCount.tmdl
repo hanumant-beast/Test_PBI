@@ -1,0 +1,17 @@
+table AttemptCount
+	lineageTag: a94e4dd9-dc10-4d4e-9311-d40d1d11200f
+
+	column 'Attempt Count'
+		lineageTag: 2528012f-b79f-4290-9b60-147b6902d003
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: order_details[Attempt Count]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition AttemptCount = calculated
+		mode: import
+		source = FILTER(SUMMARIZECOLUMNS(order_details[Attempt Count]),NOT ISBLANK(order_details[Attempt Count]))
+
+	annotation PBI_Id = 44b5d7997d5a47a3b5687d0895acb8a4
+

@@ -1,0 +1,19 @@
+table PricePoint
+	lineageTag: 976fdd69-5828-4d2a-b0db-2e3af1d9ed59
+
+	column order_total
+		lineageTag: 8b4d8651-9e34-422f-b437-9ac4e02b69eb
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: order_details[order_total]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition PricePoint = calculated
+		mode: import
+		source = FILTER(SUMMARIZECOLUMNS(order_details[order_total]),NOT ISBLANK(order_details[order_total]))
+
+	annotation PBI_Id = f8f617e48f114923b83067fa26c0e5ec
+

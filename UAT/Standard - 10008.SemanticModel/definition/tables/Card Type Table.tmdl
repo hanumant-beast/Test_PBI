@@ -1,0 +1,37 @@
+table 'Card Type Table'
+	lineageTag: 10496242-434b-47b6-92d9-e05c2bc33bab
+
+	column Card
+		dataType: string
+		lineageTag: 85b6b132-6ac4-4c1b-aec9-736a5a84b556
+		summarizeBy: none
+		sourceColumn: Card
+		sortByColumn: Index
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column Index
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: cdcb5879-f9e2-4793-a6cb-40b1c997de72
+		summarizeBy: sum
+		sourceColumn: Index
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Card Type Table' = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WCsssTlTSUTJUitWJVvJNLC5JLUpOLEoBChmBhVwyi5Pzy1KLgALGYAH/kgwwz0QpNhYA", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Card = _t, Index = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Card", type text}, {"Index", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

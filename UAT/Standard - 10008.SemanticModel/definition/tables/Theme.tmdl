@@ -1,0 +1,38 @@
+table Theme
+	lineageTag: d663b631-e2a1-4ec0-bf15-6877517e67a0
+
+	measure 'White background color' =
+			
+			VAR non_phnix=IF(SELECTEDVALUE(Theme[Type])="Dark","#1B1F23","#ffffff")
+			VAR phnix=IF(SELECTEDVALUE(Theme[Type])="Dark","#141E2D","#ffffff")
+			RETURN SWITCH(TRUE(),MAX(order_details[crm])="Phoenix CRM",phnix,non_phnix)
+		lineageTag: 248da719-7683-4b8c-aa3b-a25803af598c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Grey background color' = IF(SELECTEDVALUE(Theme[Type])="Dark","#52585C","#999999")
+		lineageTag: d339b0b4-e53c-45f1-a417-2d20fd4a1282
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Type
+		dataType: string
+		lineageTag: f22e632a-1152-485c-a65f-d0978e93e1b2
+		summarizeBy: none
+		sourceColumn: Type
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Theme = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WckksylaK1YlW8slMzyhRio0FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Type = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Type", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

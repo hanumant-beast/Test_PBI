@@ -1,0 +1,56 @@
+expression crm = "Sticky" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 39d6738b-f635-49c3-9f84-348940b836cc
+	queryGroup: Parameters
+
+	annotation PBI_ResultType = Text
+
+	annotation PBI_NavigationStepName = Navigation
+
+expression client_id = 10008 meta [IsParameterQuery=true, Type="Number", IsParameterQueryRequired=true]
+	lineageTag: 4af4b635-4627-45c6-9e3b-93a2bdb519c1
+	queryGroup: Parameters
+
+	annotation PBI_ResultType = Number
+
+	annotation PBI_NavigationStepName = Navigation
+
+expression server = "beastinsights.postgres.database.azure.com" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: b669b5d9-6185-44ef-8fc1-4dc762cf881a
+	queryGroup: Parameters
+
+	annotation PBI_ResultType = Text
+
+	annotation PBI_NavigationStepName = Navigation
+
+expression Database = "postgres" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 12afa57d-ed55-43dc-afc0-0c323282ee0e
+	queryGroup: Parameters
+
+	annotation PBI_ResultType = Text
+
+	annotation PBI_NavigationStepName = Navigation
+
+expression crm2 = "Konnektive" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: f20b641f-6577-4a2e-b921-2153d1117b34
+	queryGroup: Parameters
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+
+expression crm3 = "VRIO" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 899ee81a-d348-4133-b791-288c5c593738
+	queryGroup: Parameters
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+
+expression crm4 = "Phoenix CRM" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 13b1e5ee-ad5e-4b10-b1d1-d9ac0c5620e3
+	queryGroup: Parameters
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+

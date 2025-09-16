@@ -1,0 +1,70 @@
+table 'CB/Refund Month Parameter'
+	lineageTag: d648480b-1b14-4b32-b84f-d227688e3029
+
+	measure 'CB/Refund Development Title' = SWITCH(SELECTEDVALUE('CB/Refund Month Parameter'[CB/Refund Month Parameter Order]),0, "CB Development",1,"CS Refund Development",2,"Alert Refund Development","-")
+		lineageTag: 8f5e6ba4-bce2-4cda-9014-7949344904de
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'X Axis Title' = IF(SELECTEDVALUE('CB/Refund Month Parameter'[CB/Refund Month Parameter Order])=0, "# Days to Hit CB","# Days to Hit Refund")
+		lineageTag: c7fc3ce7-f3b4-4492-bb82-c6fc7600d57b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Y Axis Title' = IF(SELECTEDVALUE('CB/Refund Month Parameter'[CB/Refund Month Parameter Order])=0, "CB %","Refund %")
+		lineageTag: 35969203-c051-4033-8ab2-8895690fd391
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'CB/Refund Month Parameter'
+		lineageTag: bd03fb74-0e60-4ff4-a00d-737af08836e5
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'CB/Refund Month Parameter Order'
+
+		relatedColumnDetails
+			groupByColumn: 'CB/Refund Month Parameter Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'CB/Refund Month Parameter Fields'
+		isHidden
+		lineageTag: e326575d-5825-4712-a8a4-03968239e3c0
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'CB/Refund Month Parameter Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'CB/Refund Month Parameter Order'
+		isHidden
+		formatString: 0
+		lineageTag: 2f7130ff-b4a9-46cd-9a60-d2c4daa2d97c
+		summarizeBy: none
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Type = IF('CB/Refund Month Parameter'[CB/Refund Month Parameter Order]=0,"CB",IF('CB/Refund Month Parameter'[CB/Refund Month Parameter Order]=2,"Refund Alert", "Refund CS"))
+		lineageTag: 02566118-c73c-4103-a143-3680fe223d18
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'CB/Refund Month Parameter' = calculated
+		mode: import
+		source =
+				{
+				    ("CB %", NAMEOF('order_details'[CB Month]), 0),
+				    ("Refund CS %", NAMEOF('order_details'[Refund Month_CS]), 1),
+				    ("Refund Alert %", NAMEOF('order_details'[Refund Month_Alert]), 2)
+				}
+
+	annotation PBI_Id = bb2e3075b15d4715a3bc4f0a0e26e667
+

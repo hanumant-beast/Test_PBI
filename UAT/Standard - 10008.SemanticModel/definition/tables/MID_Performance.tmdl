@@ -1,0 +1,917 @@
+table MID_Performance
+	lineageTag: ef3abcac-c163-4d46-ae17-b60261437504
+
+	measure 'GW Count' = COUNT('MID_Performance'[order_details_gateway_id])
+		formatString: #,0
+		displayFolder: _Measures
+		lineageTag: 202c721b-d68a-4bdd-a3a7-20389dbb0989
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Non Blank Measure' =
+			
+			SWITCH(
+			    SELECTEDVALUE('MID Filter'[Filters]),
+			        "Top Initial MIDs",COUNTROWS(FILTER('MID_Performance','MID_Performance'[Initials Performance]="★★★")),
+			        "Best Rebill MIDs",COUNTROWS(FILTER('MID_Performance','MID_Performance'[Rebills Performance]="★★★")),
+			        "Decline Spike",COUNTROWS(FILTER('MID_Performance','MID_Performance'[Decline Spike]<>BLANK())),
+			        "High CB",COUNTROWS(FILTER('MID_Performance','MID_Performance'[Higher Chargebacks]<>BLANK())),
+			        "High Alerts",COUNTROWS(FILTER('MID_Performance','MID_Performance'[High CB Alert Coverage]<>BLANK())),
+			        "Near GW Limit",COUNTROWS(FILTER('MID_Performance','MID_Performance'[Near Capcity]<>BLANK())),
+			        "No Alerts",COUNTROWS(FILTER('MID_Performance','MID_Performance'[No Alerts Enabled]<>BLANK())),
+			        1
+			    )
+		displayFolder: _Measures
+		lineageTag: 2b220123-ac1b-49c9-aa1d-07878c0f5b24
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Cascade Filter' = INT(NOT(ISEMPTY('MID_Performance')))
+		displayFolder: _Measures
+		lineageTag: 42ce6d4c-c3b0-4467-b280-37529c1280df
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '% Approval_Master' = CALCULATE([Approval Rate], bin_lookup[card]="Mastercard")
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: _Measures
+		lineageTag: 7afadf31-d551-498b-a930-35de09cefb7d
+
+	measure '% Approval_MC_Previous Month' =
+			
+			VAR MaxDate_Selected = MAX('Calendar'[Date])
+			VAR MinDate_Selected = MIN('Calendar'[Date])
+			VAR StartDate = EOMONTH(MinDate_Selected,-2)+1
+			VAR EndDate = EOMONTH(StartDate,0)
+			VAR Prev = CALCULATE([MID_Approvals_Master %],FILTER(ALL('Calendar'),'Calendar'[Date]>=StartDate && 'Calendar'[Date]<=EndDate))
+			RETURN Prev
+		formatString: 0%;-0%;0%
+		displayFolder: _Measures
+		lineageTag: a2529777-569f-4a37-9c1e-284411eb160a
+
+	measure '% Approval_Visa' = CALCULATE([Approval Rate], bin_lookup[card]="VISA")
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: _Measures
+		lineageTag: 4d3a4b41-5627-4a46-8327-6d78419cdf31
+
+	measure '% Approval_Visa_Previous Month' =
+			
+			VAR MaxDate_Selected = MAX('Calendar'[Date])
+			VAR MinDate_Selected = MIN('Calendar'[Date])
+			VAR StartDate = EOMONTH(MinDate_Selected,-2)+1
+			VAR EndDate = EOMONTH(StartDate,0)
+			VAR Prev = CALCULATE([MID_Approvals_Visa %],FILTER(ALL('Calendar'),'Calendar'[Date]>=StartDate && 'Calendar'[Date]<=EndDate))
+			RETURN Prev
+		formatString: 0%;-0%;0%
+		displayFolder: _Measures
+		lineageTag: 5ba21839-cfc9-4163-acfa-67d3a976c1ea
+
+	measure '% CB by CB Date_MC_Previous Month' =
+			
+			VAR MaxDate_Selected = MAX('Calendar'[Date])
+			VAR MinDate_Selected = MIN('Calendar'[Date])
+			VAR StartDate = EOMONTH(MinDate_Selected,-2)+1
+			VAR EndDate = EOMONTH(StartDate,0)
+			VAR Prev = CALCULATE([MID_CB_Master %],FILTER(ALL('Calendar'),'Calendar'[Date]>=StartDate && 'Calendar'[Date]<=EndDate))
+			RETURN Prev
+		formatString: 0%;-0%;0%
+		displayFolder: _Measures
+		lineageTag: 3108f2e5-fb64-4a98-9840-bbc82b5627e8
+
+	measure '% CB by CB Date_Visa_Previous Month' =
+			
+			VAR MaxDate_Selected = MAX('Calendar'[Date])
+			VAR MinDate_Selected = MIN('Calendar'[Date])
+			VAR StartDate = EOMONTH(MinDate_Selected,-2)+1
+			VAR EndDate = EOMONTH(StartDate,0)
+			VAR Prev = CALCULATE([MID_CB_Visa %],FILTER(ALL('Calendar'),'Calendar'[Date]>=StartDate && 'Calendar'[Date]<=EndDate))
+			RETURN Prev
+		formatString: 0%;-0%;0%
+		displayFolder: _Measures
+		lineageTag: dfb5e8c4-2ee9-4cfb-b3ae-8607666f3bff
+
+	measure '% RDR Effective1_MC_Previous Month' =
+			
+			VAR MaxDate_Selected = MAX('Calendar'[Date])
+			VAR MinDate_Selected = MIN('Calendar'[Date])
+			VAR StartDate = EOMONTH(MinDate_Selected,-2)+1
+			VAR EndDate = EOMONTH(StartDate,0)
+			VAR Prev = CALCULATE([MID_Ethoca Effective1_Master %],FILTER(ALL('Calendar'),'Calendar'[Date]>=StartDate && 'Calendar'[Date]<=EndDate))
+			RETURN Prev
+		formatString: 0%;-0%;0%
+		displayFolder: _Measures
+		lineageTag: d7fb33d6-f4a2-41bf-a8bc-402f1f3c4843
+
+	measure '% RDR Effective1_Visa_Previous Month' =
+			
+			VAR MaxDate_Selected = MAX('Calendar'[Date])
+			VAR MinDate_Selected = MIN('Calendar'[Date])
+			VAR StartDate = EOMONTH(MinDate_Selected,-2)+1
+			VAR EndDate = EOMONTH(StartDate,0)
+			VAR Prev= CALCULATE([MID_RDR Effective1_Visa %],FILTER(ALL('Calendar'),'Calendar'[Date]>=StartDate && 'Calendar'[Date]<=EndDate))
+			RETURN Prev
+		formatString: 0%;-0%;0%
+		displayFolder: _Measures
+		lineageTag: 2baf691a-90d3-4802-badb-54a3c165852e
+
+	measure 'MTD Attempts' =
+			
+			VAR LastDay=MAX('Calendar'[Date])
+			RETURN CALCULATE([# Attempts],FILTER('Calendar','Calendar'[Month_Number]=MONTH(LastDay) && 'Calendar'[Year]=YEAR(LastDay)),FILTER(order_details,order_details[is_test]="No"))
+		formatString: #,0
+		displayFolder: _Measures
+		lineageTag: 96cf52eb-62ea-4afe-836a-4247d57cf7c8
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Health Tag Font Color' =
+			
+			SWITCH(
+			    SELECTEDVALUE('MID_Performance'[MID Health Tag]),
+			    "Critical","#E74C3C", -- Red
+			    "Healthy","#1aab40", -- Green
+			    "Inactive","#B2B0B0", -- Gray
+			    "At-Risk","#FFB300") -- Orange
+		displayFolder: _Measures
+		lineageTag: 0ae8b9c1-d4f7-45d4-b375-82503a1b16cc
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'MID_Initials Approval Rate' = DIVIDE(SUM('MID_Performance'[Initials #]),SUM('MID_Performance'[Initials Attempts #]),0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: _Measures
+		lineageTag: c35ecb4b-2b78-4ae6-9922-11cee2fe2ecd
+
+	measure 'MID_Rebills Approval Rate' = DIVIDE(SUM('MID_Performance'[Rebills #]),SUM('MID_Performance'[Rebills Attempts #]),0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: _Measures
+		lineageTag: 3834ac03-ddf9-496e-9e2f-bde1b33f142b
+
+	measure 'MID_Avg Initials Approval Rate' = DIVIDE(SUM('MID_Performance'[Avg Initials #]),SUM('MID_Performance'[Avg Initials Attempts #]),0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: _Measures
+		lineageTag: d03cd29d-80ce-498f-9cf7-0f6f042c848e
+
+	measure 'MID_Avg Rebills Approval Rate' = DIVIDE(SUM('MID_Performance'[Avg Rebills #]),SUM('MID_Performance'[Avg Rebills Attempts #]),0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: _Measures
+		lineageTag: 071fc975-5a82-445e-ab91-dd0cabbef2f8
+
+	measure 'MID_Approvals_Visa %' = DIVIDE(SUM('MID_Performance'[Approvals_Visa #]),SUM('MID_Performance'[Attempts_Visa #]),0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: _Measures
+		lineageTag: d0b07d94-3059-4943-9d89-09f1d1e24408
+
+	measure 'MID_CB_Visa %' = DIVIDE(SUM('MID_Performance'[CB_Visa #]),SUM('MID_Performance'[Approvals_Visa #]),0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: _Measures
+		lineageTag: a424dc01-3935-4447-b8af-22ea159f97e8
+
+	measure 'MID_CB_Master %' = DIVIDE(SUM('MID_Performance'[CB_Master #]),SUM('MID_Performance'[Approvals_Master_PP #]),0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: _Measures
+		lineageTag: 118730ce-76ca-411a-aa01-ce989327e209
+
+	measure 'MID_CB_Master #' = SUM('MID_Performance'[CB_Master #])
+		formatString: #,0
+		displayFolder: _Measures
+		lineageTag: 6505ec00-8cac-4223-85d8-6cdfcc614d19
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'MID_CB_Visa #' = SUM('MID_Performance'[CB_Visa #])
+		formatString: #,0
+		displayFolder: _Measures
+		lineageTag: 51525308-986c-4df9-aff4-7137508d7985
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'MID_Approvals_Visa #' = SUM('MID_Performance'[Approvals_Visa #])
+		formatString: #,0
+		displayFolder: _Measures
+		lineageTag: ecbb1351-73ed-44d6-9686-e96e95696d27
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'MID_Approvals_Master #' = SUM('MID_Performance'[Approvals_Master #])
+		formatString: #,0
+		displayFolder: _Measures
+		lineageTag: 26abc89a-48c2-42e9-a3f1-8f33e30d19d7
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'MID_Approvals_Master %' = DIVIDE(SUM('MID_Performance'[Approvals_Master #]),SUM('MID_Performance'[Attempts_Master #]),0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: _Measures
+		lineageTag: 23c44943-c1c4-431f-8f38-56f970c1c3e2
+
+	measure 'MID_Alerts_Visa %' = DIVIDE(SUM('MID_Performance'[# Total_Visa]),SUM('MID_Performance'[Approvals_Visa #]),0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: _Measures
+		lineageTag: 3be91ec9-b5e0-4003-ae72-5d08a894ddc9
+
+	measure 'MID_Alerts_Master %' = DIVIDE(SUM('MID_Performance'[# Total_Master]),SUM('MID_Performance'[Approvals_Master #]),0)
+		displayFolder: _Measures
+		lineageTag: fbe8850a-322a-44f7-947d-7870b73f70c8
+
+	measure 'MID_# Total_Visa' = SUM('MID_Performance'[# Total_Visa])
+		formatString: #,0
+		displayFolder: _Measures
+		lineageTag: 7faa1429-7281-4bd9-aa6d-2c1fb3117b6e
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'MID_# Total_Master' = SUM('MID_Performance'[# Total_Master])
+		formatString: #,0
+		displayFolder: _Measures
+		lineageTag: 3e5b43d9-5d21-408a-8c53-4f7b060b18d0
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure MID_Revenue = SUM('MID_Performance'[$ Revenue])
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: _Measures
+		lineageTag: f20db37e-f6a7-43ae-b549-24eb8f803169
+
+	measure 'MID_Capacity Left' = SUM('MID_Performance'[Capacity Left $])
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: _Measures
+		lineageTag: 5ecb07d8-1e6b-4ccf-bdd5-42b19ce56d00
+
+	measure 'MID_Overall_CB #' = SUM('MID_Performance'[Overall CB #])
+		formatString: #,0
+		displayFolder: _Measures
+		lineageTag: d894b61b-aafe-4020-89d1-ab17ffd9c801
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'MID_Overall_Alerts #' = SUM('MID_Performance'[Overall Alert #])
+		formatString: #,0
+		displayFolder: _Measures
+		lineageTag: cc0ade37-90ea-424d-9678-f74634a52777
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'MID_RDR #' = SUM('MID_Performance'[# RDR])
+		formatString: #,0
+		displayFolder: _Measures
+		lineageTag: 1bde73d9-639e-4db0-9dab-8786be904474
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'MID_Ethoca #' = SUM('MID_Performance'[# Ethoca])
+		formatString: #,0
+		displayFolder: _Measures
+		lineageTag: a6d5684f-f830-4350-9de1-8d84ac88038c
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'MID_Declines %' = DIVIDE(SUM('MID_Performance'[# Decline]),SUM('MID_Performance'[# Attempts]),0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: _Measures
+		lineageTag: 6a138126-69fe-44f8-9803-e4fa300f485e
+
+	measure 'MID_Declines_Visa %' = DIVIDE(SUM('MID_Performance'[Decline_Visa #]),SUM('MID_Performance'[Attempts_Visa #]),0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: _Measures
+		lineageTag: 60941526-7978-4f28-8bf3-2a2a8dd74e46
+
+	measure 'MID_Declines_Master %' = DIVIDE(SUM('MID_Performance'[Decline_Master #]),SUM('MID_Performance'[Attempts_Master #]),0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: _Measures
+		lineageTag: 8ef738a5-1a1d-4f25-9a11-ce8924282b5d
+
+	measure 'MID_RDR Effective1_Visa %' = DIVIDE(SUM('MID_Performance'[# Total_Visa]),SUM('MID_Performance'[Approvals_Visa #]),0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: _Measures
+		lineageTag: 7557ab7a-08ff-4200-b582-1ff12b417128
+
+	measure 'MID_Ethoca Effective1_Master %' = DIVIDE(SUM('MID_Performance'[# Total_Master]),SUM('MID_Performance'[Approvals_Master_PP #]),0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: _Measures
+		lineageTag: 1c52e9c2-fd52-4788-b9db-35aeec91550a
+
+	measure 'Filters_MID_Decline Spike' = COUNTROWS(FILTER('MID_Performance','MID_Performance'[Decline Spike]<>BLANK()))
+		formatString: #,0
+		displayFolder: _Measures
+		lineageTag: 28dade34-0b3a-4d0a-9564-ffa2c0d48a02
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Filters_MID_High CB' = COUNTROWS(FILTER('MID_Performance','MID_Performance'[Higher Chargebacks]<>BLANK()))
+		formatString: #,0
+		displayFolder: _Measures
+		lineageTag: cb43a934-786f-48fc-9e37-ef9d7c998b46
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Filters_MID_High Alerts' = COUNTROWS(FILTER('MID_Performance','MID_Performance'[High CB Alert Coverage]<>BLANK()))
+		formatString: #,0
+		displayFolder: _Measures
+		lineageTag: 389fe791-3e4a-4697-8c5c-2462cf50b9ad
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Filters_MID_Near GW Limit' = COUNTROWS(FILTER('MID_Performance','MID_Performance'[Near Capcity]<>BLANK()))
+		formatString: #,0
+		displayFolder: _Measures
+		lineageTag: a4e909a1-4190-455b-ac93-947e267a0c56
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Filters_MID_No Alerts' = COUNTROWS(FILTER('MID_Performance','MID_Performance'[No Alerts Enabled]<>BLANK()))
+		formatString: #,0
+		displayFolder: _Measures
+		lineageTag: e63da8eb-68a6-4edf-bf25-902406fe3e61
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'GW Count_Previous Month' =
+			
+			VAR MaxDate_Selected = MAX('Calendar'[Date])
+			VAR MinDate_Selected = MIN('Calendar'[Date])
+			VAR StartDate_Selected = EOMONTH(MinDate_Selected,-1)+1
+			VAR EndDate_Selected = EOMONTH(MinDate_Selected,0)
+			VAR StartDate = EOMONTH(MinDate_Selected,-2)+1
+			VAR EndDate = EOMONTH(StartDate,0)
+			VAR Prev = CALCULATE([GW Count],FILTER(ALL('Calendar'),'Calendar'[Date]>=StartDate && 'Calendar'[Date]<=EndDate))
+			RETURN Prev
+		formatString: 0
+		lineageTag: 9e899b33-f461-4210-9fe1-31a8c5a6d2e7
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'MID_Approvals_Master_PP #' = SUM('MID_Performance'[Approvals_Master_PP #])
+		displayFolder: _Measures
+		lineageTag: 534b4104-df24-46e0-9fec-9d71161f1db2
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'MID_RDR %' = DIVIDE([MID_RDR #],[MID_Approvals #],0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: _Measures
+		lineageTag: 37281465-1178-4038-bcf0-f34f9c43ac07
+
+	measure 'MID_Ethoca %' = DIVIDE([MID_Ethoca #],[MID_Approvals #],0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: _Measures
+		lineageTag: 1fef0edf-41bd-4c88-9f55-218b7cd73264
+
+	measure 'MID_Approvals #' = SUM(MID_Performance[# Approvals])
+		formatString: #,0
+		displayFolder: _Measures
+		lineageTag: b0a02efa-f76b-4574-8d9a-3f66ab52b211
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'MID_Overall_CB %' = DIVIDE([MID_Overall_CB #],[MID_Approvals #],0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: _Measures
+		lineageTag: f18907c3-0604-4433-8f82-a72b3048b68f
+
+	measure 'MID_Alert Rate' = DIVIDE([MID_Overall_Alerts #],[MID_Approvals #],0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: _Measures
+		lineageTag: f31e62bf-be24-4099-a369-53720cbd01ee
+
+	column Lender = CALCULATE(FIRSTNONBLANK(payments[lender],payments[lender]), FILTER(payments,payments[gateway_id]=EARLIER('MID_Performance'[order_details_gateway_id])))
+		lineageTag: ca0fa63a-7b76-49a8-b2df-37caf08b0944
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column gateway_alias = CALCULATE(FIRSTNONBLANK(payments[gateway_alias],payments[gateway_alias]), FILTER(payments,payments[gateway_id]=EARLIER('MID_Performance'[order_details_gateway_id])))
+		lineageTag: 6633d5cc-48fd-47fb-a796-d9cc36b3e874
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Monthly Cap' = CALCULATE(FIRSTNONBLANK(payments[monthly_cap],payments[monthly_cap]), FILTER(payments,payments[gateway_id]=EARLIER('MID_Performance'[order_details_gateway_id])))
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 0d2f168c-dd9a-4d56-8866-4067fa1f3391
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Avg Decline %' = CALCULATE(AVERAGE('MID_Performance'[Decline %]),FILTER('MID_Performance','MID_Performance'[Calendar_Month Year]=EARLIER('MID_Performance'[Calendar_Month Year])))
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 369ad9ad-9f4d-4665-aa09-ec38a8c3460a
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Decline Spike' = IF(('MID_Performance'[Decline %]-'MID_Performance'[Avg Decline %])>0.1,"Decline Spike",BLANK())
+		lineageTag: ff89834b-2753-4736-86a9-653113438cc2
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Near Capcity' =
+			
+			VAR a= DIVIDE([$ Revenue],'MID_Performance'[Monthly Cap],0)
+			RETURN IF( a>1,"Capacity Exceeded",IF(a>0.85,"Near Capacity",BLANK()))
+		lineageTag: 43b4e8ff-2e8a-4cd5-a1ae-2ee1f232bd8d
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column '% RDR' = CALCULATE([% RDR Effective1],FILTER(order_alerts,order_alerts[GatewayID]=EARLIER('MID_Performance'[order_details_gateway_id])),FILTER('Calendar','Calendar'[Month Year]=EARLIER('MID_Performance'[Calendar_Month Year])))
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: c0401d35-f324-4ef4-9845-07c06a0e6ecd
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column '% Ethoca' = CALCULATE([% ETHOCA Effective1],FILTER(order_alerts,order_alerts[GatewayID]=EARLIER('MID_Performance'[order_details_gateway_id])),FILTER('Calendar','Calendar'[Month Year]=EARLIER('MID_Performance'[Calendar_Month Year])))
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: bd3319da-5cf4-473f-b388-a74bc0e4b5f9
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column '# Ethoca' = CALCULATE([# ETHOCA],FILTER(order_alerts,order_alerts[GatewayID]=EARLIER('MID_Performance'[order_details_gateway_id])),FILTER('Calendar','Calendar'[Month Year]=EARLIER('MID_Performance'[Calendar_Month Year])))
+		formatString: 0
+		lineageTag: 3f4dbb3d-6b44-4553-8c67-d185077ed1b2
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column '# RDR' = CALCULATE([# RDR],FILTER(order_alerts,order_alerts[GatewayID]=EARLIER('MID_Performance'[order_details_gateway_id]) ),FILTER('Calendar','Calendar'[Month Year]=EARLIER('MID_Performance'[Calendar_Month Year])))
+		formatString: 0
+		lineageTag: 6fa73198-12f5-4d2a-98ac-2e75b9fcf702
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Decline %'
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 1a2601c3-3037-4a94-ac08-05e29cbb2978
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Decline %]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Higher Chargebacks'
+		lineageTag: f9175f74-b180-4c42-bacb-35d96e3a5e20
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Higher Chargebacks]
+
+		annotation SummarizationSetBy = Automatic
+
+	column '% Decline_Master'
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 010be7b9-4765-46b4-a2f6-06640202d7cf
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [% Decline_Master]
+
+		annotation SummarizationSetBy = Automatic
+
+	column '% Decline_Visa'
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: dd226d2b-d832-458a-86e1-de9d75ef63c3
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [% Decline_Visa]
+
+		annotation SummarizationSetBy = Automatic
+
+	column '% CB_Visa'
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 217687a4-4b37-47b4-bebc-a41212e9514a
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [% CB_Visa]
+
+		annotation SummarizationSetBy = Automatic
+
+	column '% CB_Master'
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 45a35152-c8a1-4a28-a647-af65386d35e6
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [% CB_Master]
+
+		annotation SummarizationSetBy = Automatic
+
+	column '# Attempts'
+		formatString: #,0
+		lineageTag: f5df9f6d-99cc-4af2-905f-7490e1c00f12
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [# Attempts]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'GW Available in Both table' = IF(COUNTROWS(FILTER(order_alerts,order_alerts[gateway_id]=EARLIER('MID_Performance'[order_details_gateway_id])))=BLANK(),COUNTROWS(FILTER(order_details,order_details[gateway_id]=EARLIER('MID_Performance'[order_details_gateway_id]))),COUNTROWS(FILTER(order_alerts,order_alerts[gateway_id]=EARLIER('MID_Performance'[order_details_gateway_id]))))
+		formatString: 0
+		lineageTag: 656a7df8-b9a0-47af-b9e4-d5fffc051189
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column '$ Revenue'
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 3bbd9001-8c3b-4b4d-ba31-16fb81a53eba
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [$ Revenue]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Capacity Left $' = 'MID_Performance'[Monthly Cap]-'MID_Performance'[$ Revenue]
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 2d9fe566-b0ae-4419-8059-70ffb6addae7
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Overall CB #'
+		formatString: #,0
+		lineageTag: a99233a1-5142-45eb-8b3b-cc22882df466
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Overall CB #]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Overall Alert #' = CALCULATE([# Total],FILTER(order_alerts,order_alerts[GatewayID]=EARLIER('MID_Performance'[order_details_gateway_id]) ),FILTER('Calendar','Calendar'[Month Year]=EARLIER('MID_Performance'[Calendar_Month Year])))
+		formatString: #,0
+		lineageTag: 50cce9fe-0028-4ddf-a4ba-c3e16fdde7c7
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Initials Attempts #'
+		formatString: #,0
+		lineageTag: f511b97c-e31e-4e43-a0a3-1e5058823b80
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Initials Attempts #]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Rebills Attempts #'
+		formatString: #,0
+		lineageTag: 0a2a3f8d-9fce-4fb6-a8de-f44639eb62e5
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Rebills Attempts #]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Initials #'
+		formatString: 0
+		lineageTag: f6c198a6-bee1-4eff-ab47-0ac7e780d2c3
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Initials #]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Rebills #'
+		formatString: 0
+		lineageTag: 3ef9e18d-2931-4409-b37a-fa0dd0a10450
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Rebills #]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Avg Initials Attempts #' = CALCULATE(AVERAGE('MID_Performance'[Initials Attempts #]),FILTER('MID_Performance','MID_Performance'[Calendar_Month Year]=EARLIER('MID_Performance'[Calendar_Month Year])))
+		lineageTag: 41f819e7-0ba4-4795-8251-88a0cae4f433
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Avg Rebills Attempts #' = CALCULATE(AVERAGE('MID_Performance'[Rebills Attempts #]),FILTER('MID_Performance','MID_Performance'[Calendar_Month Year]=EARLIER('MID_Performance'[Calendar_Month Year])))
+		lineageTag: 5bce4c86-d00c-42a2-b6ec-466e81f60fb5
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Avg Rebills #' = CALCULATE(AVERAGE('MID_Performance'[Rebills #]),FILTER('MID_Performance','MID_Performance'[Calendar_Month Year]=EARLIER('MID_Performance'[Calendar_Month Year])))
+		lineageTag: 14b8d7ef-9e9d-4401-a7c0-d22624f0967f
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Avg Initials #' = CALCULATE(AVERAGE('MID_Performance'[Initials #]),FILTER('MID_Performance','MID_Performance'[Calendar_Month Year]=EARLIER('MID_Performance'[Calendar_Month Year])))
+		lineageTag: 545238e9-b9e6-4e16-b6fa-4c1eb33fda71
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'MID Health Tag'
+		lineageTag: e6334ec6-fb7a-4e24-89d5-92a0429cc6ed
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [MID Health Tag]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'High CB Alert Coverage' = IF([% RDR]>0.004 || [% Ethoca]>0.04,"High CB Alert Coverage",BLANK())
+		lineageTag: e5e52ebe-2d64-4281-a3e8-264ab2b0219a
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'No Alerts Enabled' =
+			
+			VAR a=CALCULATE([# Total],FILTER(order_alerts,order_alerts[GatewayID]=EARLIER('MID_Performance'[order_details_gateway_id]) ),FILTER('Calendar','Calendar'[Month Year]=EARLIER('MID_Performance'[Calendar_Month Year])))
+			RETURN IF(a= BLANK(),"No Alerts Enabled",BLANK())
+		lineageTag: 60f37300-5a9b-4736-97a6-4496df681048
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Approvals_Visa #'
+		formatString: 0
+		lineageTag: c938ef3e-3ec2-4a27-bcc0-5eae352d3fc0
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Approvals_Visa #]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Attempts_Visa #'
+		formatString: 0
+		lineageTag: 46f46435-7a50-4c18-972b-8749b5b3628d
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Attempts_Visa #]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Attempts_Master #'
+		formatString: 0
+		lineageTag: 4d4d13fc-9509-4e96-8344-02474eb0f527
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Attempts_Master #]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'CB_Master #'
+		formatString: 0
+		lineageTag: 057ed740-0df2-4eeb-a148-b376b965909f
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [CB_Master #]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'CB_Visa #'
+		formatString: 0
+		lineageTag: ab8b92e6-befb-4f24-b436-d6847d5183b3
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [CB_Visa #]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Decline_Master #'
+		formatString: 0
+		lineageTag: a354c842-002e-436a-97e1-b01319a273b1
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Decline_Master #]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Decline_Visa #'
+		formatString: 0
+		lineageTag: 057dfd1b-d314-49d3-83ca-ec7ca176a478
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Decline_Visa #]
+
+		annotation SummarizationSetBy = Automatic
+
+	column '# Total_Master' = CALCULATE([# Total_Master],FILTER(order_alerts,order_alerts[GatewayID]=EARLIER('MID_Performance'[order_details_gateway_id])),FILTER('Calendar','Calendar'[Month Year]=EARLIER('MID_Performance'[Calendar_Month Year])))
+		formatString: 0
+		lineageTag: fa9441c5-1173-49cc-9bf2-5fa69ef3ee56
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column '# Total_Visa' = CALCULATE([# Total_Visa],FILTER(order_alerts,order_alerts[GatewayID]=EARLIER('MID_Performance'[order_details_gateway_id])),FILTER('Calendar','Calendar'[Month Year]=EARLIER('MID_Performance'[Calendar_Month Year])))
+		formatString: 0
+		lineageTag: 77ad0e12-6127-42da-ad20-cbde76584adb
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column '# Decline'
+		formatString: 0
+		lineageTag: 4808b5ed-c0b8-4249-962c-5f882222a029
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [# Decline]
+
+		annotation SummarizationSetBy = Automatic
+
+	column '# RDR Effective' = CALCULATE([# RDR],FILTER(order_alerts,order_alerts[Alerts Status]="Effective RDR" && order_alerts[GatewayID]=EARLIER('MID_Performance'[order_details_gateway_id]) ),FILTER('Calendar','Calendar'[Month Year]=EARLIER('MID_Performance'[Calendar_Month Year])))
+		formatString: 0
+		lineageTag: ba6aafb7-a7ca-43a1-a4c6-d40afe3c0e70
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column '# Ethoca Effective' = CALCULATE([# ETHOCA],FILTER(order_alerts,order_alerts[Alerts Status]="Effective Ethoca" && order_alerts[GatewayID]=EARLIER('MID_Performance'[order_details_gateway_id])),FILTER('Calendar','Calendar'[Month Year]=EARLIER('MID_Performance'[Calendar_Month Year])))
+		formatString: 0
+		lineageTag: 2835d7a6-b0f2-4942-83cb-20ebf76222d7
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Approvals_Master_PP #'
+		formatString: 0
+		lineageTag: fca49d9d-88f0-4a29-8895-999236fd56ce
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Approvals_Master_PP #]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Approvals_Master #'
+		formatString: 0
+		lineageTag: cb528979-bb35-4944-a449-d6db851497d0
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Approvals_Master #]
+
+		annotation SummarizationSetBy = Automatic
+
+	column '# Approvals'
+		formatString: 0
+		lineageTag: 72784418-b5d1-4e19-a985-317f29bb08ed
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [# Approvals]
+
+		annotation SummarizationSetBy = Automatic
+
+	column order_details_gateway_id
+		formatString: 0
+		lineageTag: 3c55dbb3-f9a1-455f-a57a-a7a42f09c650
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: order_details[gateway_id]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Calendar_Month Year'
+		lineageTag: ffc9aa2a-9669-4561-8cee-977ed49deb2c
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: Calendar[Month Year]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'order_details_GW Age'
+		lineageTag: 57df4b87-f5b4-4606-bb3c-aa4a7bf65aab
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: order_details[GW Age]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Initials Performance' = ```
+			
+			VAR x= DIVIDE('MID_Performance'[Initials #],'MID_Performance'[Initials Attempts #],0)
+			VAR y= DIVIDE('MID_Performance'[Avg Initials #],'MID_Performance'[Avg Initials Attempts #],0)
+			VAR a=x-y
+			RETURN 
+			
+			SWITCH(TRUE(),
+			        a>0.05,"★★★",
+			        a>=-0.05 && a<=0.05,"★★☆",
+			        "★☆☆"
+			    )
+			```
+		lineageTag: 16bc980a-504c-4129-82ee-8568a4102aab
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Rebills Performance' = ```
+			
+			VAR x= DIVIDE('MID_Performance'[Rebills #],'MID_Performance'[Rebills Attempts #],0)
+			VAR y= DIVIDE('MID_Performance'[Avg Rebills #],'MID_Performance'[Avg Rebills Attempts #],0)
+			VAR a=x-y
+			RETURN 
+			
+			SWITCH(TRUE(),
+			        a>0.05,"★★★",
+			        a>=-0.05 && a<=0.05,"★★☆",
+			        "★☆☆"
+			    )
+			```
+		lineageTag: 9072f1f1-d6d0-41c6-ab4a-d0297509bfe3
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Alert Rate'
+		lineageTag: 559bfe6d-2670-4796-98be-0822809ae95b
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Alert Rate]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column MCC = LOOKUPVALUE(payments[mcc],payments[gateway_id],MID_Performance[order_details_gateway_id])
+		lineageTag: ac492376-3213-453f-82f9-3b04de1ad956
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition MID_Performance = calculated
+		mode: import
+		source = ```
+				
+				SELECTCOLUMNS(
+				    SELECTCOLUMNS (
+				        SUMMARIZECOLUMNS (
+				            order_details[gateway_id],
+				            'Calendar'[Month Year],
+				            order_details[GW Age],
+				            "$ Revenue",[$ Revenue],
+				            "# Attempts",[# Attempts],
+				            "# Approvals",[# Approvals],
+				            "# Decline",[# Declines],
+				            "Initials #",CALCULATE([# Organic Approvals],order_details[Sales Type]="Initials",order_details[is_test]="No"),
+				            "Initials Attempts #", CALCULATE([# Organic Attempts],order_details[Sales Type]="Initials",order_details[is_test]="No"),
+				            "Rebills #",CALCULATE([# Organic Approvals],order_details[Sales Type]="Rebills",order_details[is_test]="No"),
+				            "Rebills Attempts #", CALCULATE([# Organic Attempts],order_details[Sales Type]="Rebills",order_details[is_test]="No"),
+				            "Overall CB #",[# CB (by CB Date)],
+				            
+				            "Approvals_Master_PP #",CALCULATE([# Approvals_PP],order_details[Card_Type]="Mastercard" && order_details[is_test]="No"),
+				            "Approvals_Master #",CALCULATE([# Approvals],order_details[Card_Type]="Mastercard" && order_details[is_test]="No"),
+				            "CB_Master #",CALCULATE([# CB (by CB Date)_Master],order_details[is_test]="No"),
+							"Approvals_Visa #",[# Approvals_Visa],
+				            "CB_Visa #",[# CB (by CB Date)_Visa],
+							
+							"Attempts_Master #",CALCULATE([# Attempts],order_details[Card_Type]="Mastercard" && order_details[is_test]="No"),
+				            "Decline_Master #",CALCULATE([# Declines],order_details[Card_Type]="Mastercard" && order_details[is_test]="No"),
+							"Attempts_Visa #",CALCULATE([# Attempts],order_details[Card_Type]="Visa" && order_details[is_test]="No"),
+				            "Decline_Visa #",CALCULATE([# Declines],order_details[Card_Type]="Visa" && order_details[is_test]="No"),
+				            
+				            "% CB_Master",[% CB (by CB Date)_Master],
+				            "% CB_Visa",[% CB (by CB Date)_Visa],
+				            "Decline %",[% Decline],
+				            "% Decline_Visa",[% Decline_Visa],
+				            "% Decline_Master",[% Decline_Master],
+				            "Higher Chargebacks",IF([% CB by CB Date]>0.02 || [# CB (by CB Date)]>30,"Higher Chargebacks",BLANK()),
+				            "MTD Attempts", [MTD Attempts],
+				            "CB Count", [# CB (by CB Date)],
+				            "CB Rate", [% CB by CB Date],
+				            "VISA CB Rate", [% CB (by CB Date)_Visa],
+				            "MC CB Rate", [% CB (by CB Date)_Master],
+				            "Decline Rate", [% Decline],
+				            "Alert Rate", DIVIDE( CALCULATE([# Total],FILTER(order_alerts,order_alerts[GatewayID]=SELECTEDVALUE(order_details[gateway_id]))),[# Approvals],0)
+				        ),
+				        order_details[gateway_id],'Calendar'[Month Year],order_details[GW Age],[Decline %],[Higher Chargebacks],[% Decline_Master],[% Decline_Visa],[% CB_Visa],[% CB_Master],[# Attempts],[$ Revenue],[Overall CB #],[Initials Attempts #],[Rebills Attempts #],[Initials #],[Rebills #],[Approvals_Visa #],[Attempts_Visa #],[Approvals_Master_PP #],[Approvals_Master #],[Attempts_Master #],[CB_Master #],[CB_Visa #],[Decline_Master #],[Decline_Visa #],[# Decline],[# Approvals],[Alert Rate],
+				        
+				        "Inactive GW", 
+				        IF([MTD Attempts] in {BLANK(),0},"Inactive",BLANK()),
+				
+				        "Critical GW", 
+				        VAR a=IF([CB Rate]>0.025,1,0)
+				        VAR b=IF([CB Count]>65,1,0)
+				        VAR c=IF([VISA CB Rate]>0.025,1,0)
+				        VAR d=IF([MC CB Rate]>0.025,1,0)
+				        VAR e=IF([Decline Rate]>0.6,1,0)
+				        VAR f=IF([Alert Rate]>0.04,1,0)
+				        VAR final = a+b+c+d+e+f
+				        RETURN IF(final>=2,"Critical",BLANK()),
+				        
+				        "Monitor GW", 
+				        VAR a=IF([CB Rate]>=0.015 && [CB Rate]<=0.025,1,0)
+				        VAR b=IF([CB Count]>=40 && [CB Count]<=65,1,0)
+				        VAR c=IF([VISA CB Rate]>=0.0125 && [VISA CB Rate]<=0.025,1,0)
+				        VAR d=IF([MC CB Rate]>=0.0125 && [MC CB Rate]<=0.025,1,0)
+				        VAR e=IF([Decline Rate]>=0.45 && [Decline Rate]<=0.6,1,0)
+				        VAR f=IF(([Alert Rate]>=0.02 && [Alert Rate]<=0.04),1,0)
+				        VAR final = a+b+c+d+e+f
+				        RETURN IF(final>=2,"At-Risk",BLANK())
+				    ),
+				order_details[gateway_id],'Calendar'[Month Year],[Alert Rate],[Initials Attempts #],[# Approvals],[Decline_Master #],[Decline_Visa #],[CB_Master #],[CB_Visa #],[Initials #],[Rebills #],[Rebills Attempts #],order_details[GW Age],[# Decline],[Overall CB #],[Approvals_Visa #],[Attempts_Visa #],[Approvals_Master_PP #],[Approvals_Master #],[Attempts_Master #],[Decline %],[Higher Chargebacks],[% Decline_Master],[% Decline_Visa],[% CB_Visa],[% CB_Master],[$ Revenue],[# Attempts],
+				"MID Health Tag",IF([Inactive GW]="Inactive",[Inactive GW],IF([Critical GW]="Critical",[Critical GW],IF([Monitor GW]="At-Risk",[Monitor GW],"Healthy"))))
+				```
+
+	annotation PBI_Id = 5b5b8c0800a34b5aa88fc77a36b48fbf
+

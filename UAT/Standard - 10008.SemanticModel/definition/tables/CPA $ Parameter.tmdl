@@ -1,0 +1,42 @@
+table 'CPA $ Parameter'
+	lineageTag: 37ef5c7c-202d-4854-9ac9-1e4f86bd4089
+
+	measure 'CPA Value' = ```
+			
+			MIN('CPA $ Parameter'[Value])
+			// SELECTEDVALUE('CPA $ Parameter'[Value], 15)
+			
+			
+			// IF(
+			//     SELECTEDVALUE(Products[cpa]) > 0, 
+			//     SELECTEDVALUE(Products[cpa]), 
+			//     SELECTEDVALUE(CPA[CPA])
+			// )
+			```
+		formatString: 0.0
+		lineageTag: 0f4732b4-3bfa-4e5f-8181-d4479a1dda4e
+
+	column Value
+		dataType: double
+		lineageTag: 655913fa-ae1f-4304-b106-d7b762ad700f
+		summarizeBy: sum
+		sourceColumn: Value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition 'CPA $ Parameter' = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database(server, Database),
+				    beast_insights_v2_generic_series = Source{[Schema="beast_insights_v2",Item="generic_series"]}[Data],
+				    #"Renamed Columns" = Table.RenameColumns(beast_insights_v2_generic_series,{{"number", "Value"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

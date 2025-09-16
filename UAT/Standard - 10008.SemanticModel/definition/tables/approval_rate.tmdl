@@ -1,0 +1,91 @@
+table approval_rate
+	lineageTag: 156db158-bf9f-498e-9630-6c6e836a1f1b
+
+	column Cycle
+		formatString: 0
+		lineageTag: 4f4f4504-9730-469b-a1be-2078cd8f3922
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Cycle]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Attempt
+		formatString: 0
+		lineageTag: 22058927-8c90-4cf8-94a3-fb395c5fdf5c
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Attempt]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Approval_Rate = ```
+			IF ( approval_rate[Cycle] <= 5 && approval_rate[Attempt] <= 5,
+			    CALCULATE ( [Approval Rate],
+			        FILTER ( order_details,
+			                order_details[Attempt_Count] = approval_rate[Attempt]
+			                && order_details[is_test] = "No"
+			                && order_details[subscription_flag] = 1
+			                && order_details[Cycle] = approval_rate[Cycle]
+			                && order_details[order_total] <> BLANK ()
+			                && order_details[date_of_sale] >= TODAY () - 90
+			        )
+			    ),
+			    IF ( approval_rate[Cycle] = 6 && approval_rate[Attempt] <= 5,
+			     CALCULATE ( [Approval Rate],
+			        FILTER ( order_details,
+			                order_details[Attempt_Count] = approval_rate[Attempt]
+			                && order_details[is_test] = "No"
+			                && order_details[subscription_flag] = 1
+			                && order_details[Cycle] >=6
+			                && order_details[order_total] <> BLANK ()
+			                && order_details[date_of_sale] >= TODAY () - 90
+			        )
+			    ),
+			    IF(approval_rate[Cycle] = 6 && approval_rate[Attempt] = 6,
+			     CALCULATE ( [Approval Rate],
+			        FILTER ( order_details,
+			                order_details[Attempt_Count] >=6
+			                && order_details[is_test] = "No"
+			                && order_details[subscription_flag] = 1
+			                && order_details[Cycle] >=6
+			                && order_details[order_total] <> BLANK ()
+			                && order_details[date_of_sale] >= TODAY () - 90)),
+			    
+			    CALCULATE ( [Approval Rate],
+			        FILTER ( order_details,
+			                order_details[Attempt_Count] >=6
+			                && order_details[is_test] = "No"
+			                && order_details[subscription_flag] = 1
+			                && order_details[Cycle] =approval_rate[Cycle]
+			                && order_details[order_total] <> BLANK ()
+			                && order_details[date_of_sale] >= TODAY () - 90)
+			                )
+			)))
+			```
+		lineageTag: de0a23a9-bc5f-4ef2-9c79-5598ab0bf608
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition approval_rate = calculated
+		mode: import
+		source = ```
+				
+				GENERATE(
+				    SELECTCOLUMNS(
+				        GENERATESERIES(0, 6, 1),
+				        "Cycle", [Value]
+				    ),
+				    SELECTCOLUMNS(
+				        GENERATESERIES(1, 6, 1),
+				        "Attempt", [Value]
+				    )
+				)
+				
+				```
+
+	annotation PBI_Id = 2f41d787704c49ca879fc35cfdaac2f6
+

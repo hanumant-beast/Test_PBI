@@ -1,0 +1,311 @@
+table payments
+	lineageTag: 5680e19f-1b3c-4caf-a36d-d50cf24d92a5
+
+	column gateway_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 42818c8d-1188-4c7b-8d41-7e41e95da1e0
+		summarizeBy: none
+		sourceColumn: gateway_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column gateway_type
+		dataType: string
+		lineageTag: d70ccc49-7ffe-4743-b438-77eba0de1903
+		summarizeBy: none
+		sourceColumn: gateway_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column gateway_provider
+		dataType: string
+		lineageTag: c9fdf4d5-46a2-4a1b-a21a-38f48d3c6868
+		summarizeBy: none
+		sourceColumn: gateway_provider
+
+		annotation SummarizationSetBy = Automatic
+
+	column gateway_alias
+		dataType: string
+		lineageTag: 9d883b6e-70b1-4331-866b-296b40dfd463
+		summarizeBy: none
+		sourceColumn: gateway_alias
+
+		annotation SummarizationSetBy = Automatic
+
+	column gateway_created
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 0c0b9def-10d8-4a2a-a304-1340b65fe711
+		summarizeBy: none
+		sourceColumn: gateway_created
+
+		variation Variation
+			isDefault
+			relationship: 846a7893-78f7-4113-b21d-34591ec8388f
+			defaultHierarchy: LocalDateTable_fdd209bf-2710-454b-97e0-863739e82f57.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column gateway_active
+		dataType: string
+		lineageTag: b0f2f9ac-812a-46ed-95b0-2828add27880
+		summarizeBy: none
+		sourceColumn: gateway_active
+
+		annotation SummarizationSetBy = Automatic
+
+	column monthly_sales
+		dataType: double
+		lineageTag: 1e635202-1bd1-49bb-ac71-64f40b912bc7
+		summarizeBy: sum
+		sourceColumn: monthly_sales
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column processing_percent
+		dataType: int64
+		formatString: 0
+		lineageTag: 00ee1984-3941-4007-a7a8-7f0a485031e1
+		summarizeBy: sum
+		sourceColumn: processing_percent
+
+		annotation SummarizationSetBy = Automatic
+
+	column reserve_percent
+		dataType: int64
+		formatString: 0
+		lineageTag: a96ac60c-bd5c-496c-98fc-7a0afd400a1b
+		summarizeBy: sum
+		sourceColumn: reserve_percent
+
+		annotation SummarizationSetBy = Automatic
+
+	column transaction_fee
+		dataType: int64
+		formatString: 0
+		lineageTag: 1a92c65c-0640-4bed-ac8d-bdc099eac47e
+		summarizeBy: sum
+		sourceColumn: transaction_fee
+
+		annotation SummarizationSetBy = Automatic
+
+	column chargeback_fee
+		dataType: int64
+		formatString: 0
+		lineageTag: 19af6a84-b0b4-4130-a4e8-f89be9d97c7b
+		summarizeBy: sum
+		sourceColumn: chargeback_fee
+
+		annotation SummarizationSetBy = Automatic
+
+	column global_monthly_cap
+		dataType: int64
+		formatString: 0
+		lineageTag: d1b849f5-157c-4c8b-b87c-3b28039056b6
+		summarizeBy: sum
+		sourceColumn: global_monthly_cap
+
+		annotation SummarizationSetBy = Automatic
+
+	column gateway_descriptor
+		dataType: string
+		lineageTag: 52d383c1-16b6-49db-b7c8-0bcf1b5268fc
+		summarizeBy: none
+		sourceColumn: gateway_descriptor
+
+		annotation SummarizationSetBy = Automatic
+
+	column customer_service_number
+		dataType: string
+		lineageTag: 739bb676-e635-4372-a45e-52bfb84481ec
+		summarizeBy: none
+		sourceColumn: customer_service_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column gateway_currency
+		dataType: string
+		lineageTag: 80bd5a1c-b8f3-4233-8150-53912bf37cfa
+		summarizeBy: none
+		sourceColumn: gateway_currency
+
+		annotation SummarizationSetBy = Automatic
+
+	column crm
+		dataType: string
+		lineageTag: c4ca399b-a603-4d53-9ed4-2aad7c2744d4
+		summarizeBy: none
+		sourceColumn: crm
+
+		annotation SummarizationSetBy = Automatic
+
+	column client_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 689a2be6-be37-45de-aefc-cfe2e2f89d06
+		summarizeBy: sum
+		sourceColumn: client_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column client_name
+		dataType: string
+		lineageTag: 368dc2b8-28e1-4601-a703-15d20f70d25c
+		summarizeBy: none
+		sourceColumn: client_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column lender
+		dataType: string
+		lineageTag: 82f93623-3c49-45d4-b5be-9640b4c43e60
+		summarizeBy: none
+		sourceColumn: lender
+
+		annotation SummarizationSetBy = Automatic
+
+	column mcc
+		dataType: string
+		lineageTag: 2552ca2e-a4a1-419a-a599-f3eaa237710a
+		summarizeBy: none
+		sourceColumn: mcc
+
+		annotation SummarizationSetBy = Automatic
+
+	column id
+		dataType: int64
+		formatString: 0
+		lineageTag: c837ca7c-849d-42b4-bf55-18d747d3b294
+		summarizeBy: sum
+		sourceColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	column gateway_mcc
+		dataType: string
+		lineageTag: 3fa09d4f-22e1-414d-8e97-cf40e4fe384b
+		summarizeBy: none
+		sourceColumn: gateway_mcc
+
+		annotation SummarizationSetBy = Automatic
+
+	column corp
+		dataType: string
+		lineageTag: 0e96ae21-444b-4312-97b9-6660bd4d5f5b
+		summarizeBy: none
+		sourceColumn: corp
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_exclude
+		dataType: int64
+		formatString: 0
+		lineageTag: 48e1817f-1e00-4476-a4cd-e6f860a5b2c0
+		summarizeBy: sum
+		sourceColumn: is_exclude
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_api_active
+		dataType: int64
+		formatString: 0
+		lineageTag: 0ef82a82-5f07-4a1d-a8a3-cb3e609c6f04
+		summarizeBy: sum
+		sourceColumn: is_api_active
+
+		annotation SummarizationSetBy = Automatic
+
+	column monthly_cap
+		dataType: double
+		lineageTag: 22c1cbf9-4a62-4798-b608-7133027540da
+		summarizeBy: sum
+		sourceColumn: monthly_cap
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column mid_status
+		dataType: string
+		lineageTag: 5e94256b-26c7-4a60-8b03-4a852a20fef5
+		summarizeBy: none
+		sourceColumn: mid_status
+
+		annotation SummarizationSetBy = Automatic
+
+	column cb_count_threshold
+		dataType: int64
+		formatString: 0
+		lineageTag: 1aa5572f-daa4-4d0d-8ce9-8dcae5405a66
+		summarizeBy: sum
+		sourceColumn: cb_count_threshold
+
+		annotation SummarizationSetBy = Automatic
+
+	column cb_ratio_threshold
+		dataType: double
+		lineageTag: b3eb9899-e05e-4cea-909b-76ea9e4f5014
+		summarizeBy: sum
+		sourceColumn: cb_ratio_threshold
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column decline_pct_threshold
+		dataType: double
+		lineageTag: 4b636ab5-b6a3-4b32-8b0d-b22422d9f0bb
+		summarizeBy: sum
+		sourceColumn: decline_pct_threshold
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column is_lender_filled_with_ai
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 75b76fbe-8c7a-430e-bdab-9cce6110f07b
+		summarizeBy: none
+		sourceColumn: is_lender_filled_with_ai
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_corp_filled_with_ai
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 0e54bf25-a976-4a41-a0b0-f56ad104bddf
+		summarizeBy: none
+		sourceColumn: is_corp_filled_with_ai
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_mcc_filled_with_ai
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: f34b1334-16b6-4346-b9e0-2dbe5d36edf7
+		summarizeBy: none
+		sourceColumn: is_mcc_filled_with_ai
+
+		annotation SummarizationSetBy = Automatic
+
+	partition payments = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database(server, Database),
+				    public_payments = Source{[Schema="public",Item="payments"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(#"public_payments",{{"gateway_id", Int64.Type}, {"gateway_type", type text}, {"gateway_provider", type text}, {"gateway_alias", type text}, {"gateway_created", type datetime}, {"gateway_active", type text}, {"monthly_sales", type number}, {"processing_percent", Int64.Type}, {"reserve_percent", Int64.Type}, {"transaction_fee", Int64.Type}, {"chargeback_fee", Int64.Type}, {"global_monthly_cap", Int64.Type}, {"gateway_descriptor", type text}, {"customer_service_number", type text}, {"gateway_currency", type text},  {"crm", type text}, {"client_id", Int64.Type}, {"client_name", type text}}),
+				    #"Filtered Rows" = Table.SelectRows(#"Changed Type", each [crm] = crm or [crm] = crm2 or [crm] = crm2 or [crm] = crm3  or [crm] = crm4),
+				    #"Filtered Rows1" = Table.SelectRows(#"Filtered Rows", each [client_id] = client_id)
+				in
+				    #"Filtered Rows1"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

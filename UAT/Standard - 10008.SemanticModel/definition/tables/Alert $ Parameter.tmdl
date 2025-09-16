@@ -1,0 +1,34 @@
+table 'Alert $ Parameter'
+	lineageTag: 0fcb83be-a78a-4d6f-8156-0591386cb8b2
+
+	measure 'Alert $ Value' =
+			
+			MIN('Alert $ Parameter'[Value])
+			// SELECTEDVALUE('Alert $ Parameter'[Value], 15)
+		formatString: 0.0
+		lineageTag: d1429866-86ce-46f6-82ae-32ef3e780632
+
+	column Value
+		dataType: double
+		lineageTag: fece933e-0fa7-4c56-8f4d-7ef2da6a52e6
+		summarizeBy: sum
+		sourceColumn: Value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition 'Alert $ Parameter' = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database(server, Database),
+				    beast_insights_v2_generic_series = Source{[Schema="beast_insights_v2",Item="generic_series"]}[Data],
+				    #"Renamed Columns" = Table.RenameColumns(beast_insights_v2_generic_series,{{"number", "Value"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,17 @@
+table 'Month Year List'
+	lineageTag: 19bdb4b9-2f29-4ec7-b150-b781c5fab22c
+
+	column 'Month Year'
+		lineageTag: 1e309c77-dc79-47a5-ab89-cfc22625d2a1
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: Calendar[Month Year]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Month Year List' = calculated
+		mode: import
+		source = DISTINCT('Calendar'[Month Year])
+
+	annotation PBI_Id = 5ea342394ebb475691c2a17b232ad351
+

@@ -1,0 +1,63 @@
+table 'MID Performance Parameter'
+	lineageTag: e4f5120a-84b5-4545-8c28-47ecd528e059
+
+	column 'MID Performance Parameter'
+		lineageTag: c58e5fec-a35c-45b3-ba7a-db901c537344
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'MID Performance Parameter Order'
+
+		relatedColumnDetails
+			groupByColumn: 'MID Performance Parameter Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'MID Performance Parameter Fields'
+		isHidden
+		lineageTag: 963743f7-9738-4a24-9440-dfc4caee8956
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'MID Performance Parameter Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'MID Performance Parameter Order'
+		isHidden
+		formatString: 0
+		lineageTag: 7ac1989e-9c23-4af7-81e5-e4c0719373c1
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'MID Performance Parameter' = calculated
+		mode: import
+		source =
+				{
+				    ("Volume $", NAMEOF('MID_Performance'[MID_Revenue]), 0),
+				    ("Capacity Left $", NAMEOF('MID_Performance'[MID_Capacity Left]), 1),
+				    ("Overall CB #", NAMEOF('MID_Performance'[MID_Overall_CB #]), 2),
+				    ("Overall CB %", NAMEOF('MID_Performance'[MID_Overall_CB %]), 2.1),
+				    ("Overall Alert #", NAMEOF('MID_Performance'[MID_Overall_Alerts #]), 3),
+				    ("Overall Alert %", NAMEOF('MID_Performance'[MID_Alert Rate]), 3.1),
+				    ("Overall Decline %", NAMEOF('MID_Performance'[MID_Declines %]), 4),
+				    ("Decline % Master", NAMEOF('MID_Performance'[MID_Declines_Master %]), 5),
+				    ("Decline % Visa", NAMEOF('MID_Performance'[MID_Declines_Visa %]), 6),
+				    ("CB # Master", NAMEOF('MID_Performance'[MID_CB_Master #]), 7),
+				    ("CB % Master", NAMEOF('MID_Performance'[MID_CB_Master %]), 7.1),
+				    ("CB # Visa", NAMEOF('MID_Performance'[MID_CB_Visa #]), 8),
+				    ("CB % Visa", NAMEOF('MID_Performance'[MID_CB_Visa %]), 8.1),
+				    ("RDR #", NAMEOF([MID_RDR #]), 9),
+				    ("RDR %", NAMEOF([MID_RDR %]), 10),
+				    ("Ethoca #", NAMEOF([MID_Ethoca #]), 11),
+				    ("Ethoca %", NAMEOF([MID_Ethoca %]), 12)
+				}
+
+	annotation PBI_Id = b6166c0441984b17a462db7f2be6f1dd
+

@@ -1,0 +1,74 @@
+table bin_lookup
+	lineageTag: 19b9276d-ac24-414c-8dc9-fa2c3dce14c0
+
+	column BIN
+		dataType: int64
+		formatString: 0
+		lineageTag: 63c54551-b295-4d91-a033-b7a75df16d2d
+		summarizeBy: none
+		sourceColumn: BIN
+
+		annotation SummarizationSetBy = Automatic
+
+	column Bank
+		dataType: string
+		lineageTag: 2591f693-efac-4227-bdbd-5baf1b9c3756
+		summarizeBy: none
+		sourceColumn: Bank
+
+		annotation SummarizationSetBy = Automatic
+
+	column card
+		dataType: string
+		lineageTag: 30249415-30e2-4a66-9007-60d04dff5091
+		summarizeBy: none
+		sourceColumn: card
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Card Type'
+		dataType: string
+		lineageTag: d85b05d5-b090-4bfe-aad6-c02ab146632c
+		summarizeBy: none
+		sourceColumn: Card Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column class
+		dataType: string
+		lineageTag: 59093b03-df65-42e9-a768-e72a38443f44
+		summarizeBy: none
+		sourceColumn: class
+
+		annotation SummarizationSetBy = Automatic
+
+	column country
+		dataType: string
+		lineageTag: 40af389f-c268-4e1f-b38c-6c8399d9e3ec
+		summarizeBy: none
+		sourceColumn: country
+
+		annotation SummarizationSetBy = Automatic
+
+	column countrycode
+		dataType: string
+		lineageTag: 073a0229-3cb8-41ff-85c2-f373e27f56dc
+		summarizeBy: none
+		sourceColumn: countrycode
+
+		annotation SummarizationSetBy = Automatic
+
+	partition bin_lookup = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database(server, Database),
+				    public_bin_lookup = Source{[Schema="public",Item="bin_lookup"]}[Data],
+				    #"Renamed Columns" = Table.RenameColumns(public_bin_lookup,{{"bank", "Bank"}, {"bin", "BIN"}, {"type", "Card Type"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

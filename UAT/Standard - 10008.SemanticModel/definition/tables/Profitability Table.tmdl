@@ -1,0 +1,84 @@
+table 'Profitability Table'
+	lineageTag: 9d05beda-eaba-4775-9caf-8b9f339e60d9
+
+	measure 'Profitability Value' =
+			
+			VAR a=SWITCH(SELECTEDVALUE('Profitability Table'[Parameter]),
+			    "$ Revenue", [$$ New Revenue],
+			    "Refund Alert", [$$ New Refund_alert],
+			    "Refund CS",[$$ New Refund_CS],
+			    "CB", [New $CB],
+			    "Fees", 'SMZ_Profitability'[PNL_$ Fees],
+			    "Product Cost", 'SMZ_Profitability'[PNL_Product Cost],
+			    "CB Fees",[PNL_$ CB Fees],
+			    "CPA Cost", 'SMZ_Profitability'[PNL_CPA Cost],
+			    "Alert Cost", [PNL_Alert Cost],
+			    "Reserve $",'SMZ_Profitability'[PNL_$ Reserve],
+			    "Gross Profit", 'SMZ_Profitability'[PNL_Gross Profit],
+			    // "Gross Margin", 'SMZ_Profitability'[PNL_Gross Margin],
+			    'SMZ_Profitability'[PNL_Gross Profit]
+			)
+			RETURN IF(a=0,BLANK(),a)
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: c46a6cf0-6a34-446c-9867-9a7c14d05f3b
+
+	measure 'Profitability Font Color' =
+			
+			SWITCH(
+			    SELECTEDVALUE('Profitability Table'[Parameter]),
+			    "Gross Profit",IF('Profitability Table'[Profitability Value]<0,"#FF0000","#1AAB40"),
+			    "$ Revenue",IF('Profitability Table'[Profitability Value]>0,"#1AAB40"),
+			    "#FF0000"
+			)
+		lineageTag: 546067f4-9f98-4ff2-977a-f50528313c21
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Parameter
+		dataType: string
+		lineageTag: 49792cd8-9cd4-444c-aa80-633dc182da1a
+		summarizeBy: none
+		sourceColumn: Parameter
+		sortByColumn: Index
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column Index
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 4f78f3c6-aebc-4fb1-9b97-66dfecebc3f6
+		summarizeBy: sum
+		sourceColumn: Index
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parameter New'
+		dataType: string
+		lineageTag: b1688bec-c22a-4fed-85bc-6b1583778c32
+		summarizeBy: none
+		sourceColumn: Parameter New
+		sortByColumn: Index
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Profitability Table' = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("VZC7DoMwDEV/xYoYqVT67giR2hXRETFQMA+1AikBvr92QgoMHnLP9Y3tNBUeJDhhN6LwRUC1vDM/FQlWY1dC+EU1EDxQwQ426somX8SPGw9JbJARqSdLZJOrGt958QHPwAeiJnS2OFZ9gVq3XQ0G2HaYTZc5I1ogNZRjMYDsNc94/ccsqsmIQ2e5zSFOYWyWcYa7Naw0u6VGNSFNTafauzWdxo6n6rXmr6uWYwI+6EbLsh8=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Parameter = _t, Index = _t, Parameter.1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Parameter", type text}, {"Index", Int64.Type}}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Changed Type",{{"Parameter.1", "Parameter New"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

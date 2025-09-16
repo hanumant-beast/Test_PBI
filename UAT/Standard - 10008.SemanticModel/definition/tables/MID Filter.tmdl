@@ -1,0 +1,80 @@
+table 'MID Filter'
+	lineageTag: 6a35e877-0298-4974-a6d9-f3a7961ebab1
+
+	measure Hint: = MAX('MID Filter'[Reasoning])
+		lineageTag: 7e550318-bbf2-4558-8ab8-0f4660ece43a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Max Index' = MAX('MID Filter'[Index])
+		lineageTag: 3931bdae-4605-4147-aedc-108aa8bcbef0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'MID Filters Values' =
+			
+			VAR a= SWITCH(
+			    SELECTEDVALUE('MID Filter'[Index]),
+			        2,COUNTROWS(FILTER('MID_Performance','MID_Performance'[Initials Performance]="★★★")),
+			        3,COUNTROWS(FILTER('MID_Performance','MID_Performance'[Rebills Performance]="★★★")),
+			        4,COUNTROWS(FILTER('MID_Performance','MID_Performance'[Near Capcity]<>BLANK())),
+			        5,COUNTROWS(FILTER('MID_Performance','MID_Performance'[Decline Spike]<>BLANK())),
+			        6,COUNTROWS(FILTER('MID_Performance','MID_Performance'[Higher Chargebacks]<>BLANK())),
+			        7,COUNTROWS(FILTER('MID_Performance','MID_Performance'[High CB Alert Coverage]<>BLANK())),
+			        8,COUNTROWS(FILTER('MID_Performance','MID_Performance'[No Alerts Enabled]<>BLANK())),
+			        1,COUNT('MID_Performance'[order_details_gateway_id]),0)
+			RETURN IF(a=BLANK(),0,a)
+		formatString: #,0
+		lineageTag: 5d01feec-bd3e-44d5-ba77-775562ba22e8
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	column Filters
+		dataType: string
+		lineageTag: 6742ca17-2377-4fc5-9621-5a5bcaced95f
+		summarizeBy: none
+		sourceColumn: Filters
+		sortByColumn: Index
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column Index
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 61ded2f3-594d-43c9-8243-62d0aaac46cc
+		summarizeBy: sum
+		sourceColumn: Index
+
+		changedProperty = SortByColumn
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Reasoning
+		dataType: string
+		isHidden
+		lineageTag: 7ade3f70-d5ad-422a-a2f7-cf3511a989c8
+		summarizeBy: none
+		sourceColumn: Reasoning
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'MID Filter' = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("fY9Na8MwDIb/ivC5l33vmjbQFbYxtrIdQg+qo8Smjh1spaX/foob2sJgB4HBz/NKb1WpwjlY/qiZupEpqcHBMSRypNkGrzazSq1DDytv2aKDt1WZBLyVmVNi6Ck2IXbWt5KSQN5ndB3RJ8wxKedk4ZO21p1z7v7Jmcg/Me+EUSB4tZ1l8e9llsh0wGMC7UIi4ABd8GzcEb6DGzqCRfGR5ZK0s57gq7c7EvFhlGXhwbIBhDTUNXmoJyqNFGTxxbYGFnPBH68VNiSrpIA2GFvaot6lC184ijz2fLp2zPjVRBxqwBOQa4UL/jzhbJDB4J7AhxMLOuwpYjtetfkF", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Filters = _t, Index = _t, Reasoning = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Filters", type text}, {"Index", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

@@ -1,0 +1,23 @@
+table 'Removing Pending Rebills'
+	lineageTag: b7a1af93-2025-49cb-adc8-05bc59d052df
+
+	column 'Removing Pending Rebills'
+		dataType: int64
+		formatString: 0
+		lineageTag: b8e14d14-a9e9-49b9-8800-89b48c387dd6
+		summarizeBy: sum
+		sourceColumn: Removing Pending Rebills
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Removing Pending Rebills' = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WMlCK1YlWMlSKjQUA", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Removing Pending Rebills" = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Removing Pending Rebills", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+
