@@ -1,6 +1,11 @@
 table approval_rate
 	lineageTag: 156db158-bf9f-498e-9630-6c6e836a1f1b
 
+	measure Measure = 1
+		lineageTag: f7576156-c4e3-45d1-a70c-26025abf7cb9
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
 	column Cycle
 		formatString: 0
 		lineageTag: 4f4f4504-9730-469b-a1be-2078cd8f3922
