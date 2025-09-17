@@ -1,0 +1,22 @@
+table 'Retention Base'
+	lineageTag: a0f248b6-6063-4c3c-ab45-478b92dce96c
+
+	column Base
+		dataType: string
+		lineageTag: d0eabf8b-2da6-462d-b08e-1e4006f74e06
+		summarizeBy: none
+		sourceColumn: Base
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Retention Base' = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45W8szLLMlMzFGK1YlWCihKLcvMLy1Wio0FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Base = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Base", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

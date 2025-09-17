@@ -1,0 +1,1048 @@
+table SMZ_Profitability
+	lineageTag: 4c18ebd6-c9f5-48c9-b390-8b8e9c5cab79
+
+	measure 'PNL_$ Refund by Refund Date' = SUM(SMZ_Profitability[$ Refund by Refund Date])
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +RFND
+		lineageTag: c6764b83-9d2a-42c6-a075-5d6c80b26801
+
+	measure SALES_Revenue = SUM(SMZ_Profitability[Revenue])
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +Sales
+		lineageTag: 887872c9-5114-410c-856f-04575fdf5fd1
+
+	measure 'PNL_$ CB by CB Date' = SUM(SMZ_Profitability[$ CB by CB Date])
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +CB
+		lineageTag: 6bc1cc1b-cbe3-4597-be16-0e6abaa90b68
+
+	measure 'PNL_$ Fees' =
+			[$$ New Revenue]*'Processing Fee % Parameter'[Processing Fees % Value]/100
+			
+			// ([New #CB]*'CB fees $ Parameter'[CB Fees Value]) + [$$ New Revenue]*'Processing Fee % Parameter'[Processing Fees % Value]/100
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +Other
+		lineageTag: 162fdfa4-feb5-4997-93b2-832ef96e2ecb
+
+	measure 'PNL_Product Cost' = SUMX(SMZ_Profitability, IF(SELECTEDVALUE('CB/Refund Date'[Parameter])="Initial Date",SMZ_Profitability[Approvals by Initial Date],SMZ_Profitability[Approvals])*RELATED(products[product_cost]) )
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +Other
+		lineageTag: efc5d2f7-25af-422a-8283-d7f08427542f
+
+	measure 'PNL_Initials CPA' = ```
+			
+			CALCULATE(
+			    sum(SMZ_Profitability[Approvals]),
+			    FILTER(
+			        SMZ_Profitability,
+			        SMZ_Profitability[Sales Type]= "Initials" && ISBLANK(RELATED(Products[cpa])) || RELATED(Products[cpa])>0 
+			    ),
+			     NOT campaigns[Campaign Type] IN { "Scrub","Prepaid"})
+			```
+		displayFolder: +Other
+		lineageTag: ab40d4e2-2503-4639-878b-e11cdbd07be9
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'PNL_CPA Cost' =
+			
+			SUMX(SUMMARIZE(SMZ_Profitability,SMZ_Profitability[Date],SMZ_Profitability[campaign_id],SMZ_Profitability[product_id],"val",IF([PNL_CPA_Column]>0,[PNL_CPA_Column],[PNL_CPA_Parameter])),[val])
+			
+			// ,SMZ_Profitability[gateway_id],SMZ_Profitability[BIN],SMZ_Profitability[Billing Cycle],SMZ_Profitability[affid],SMZ_Profitability[sub_affid],SMZ_Profitability[Sales Type],SMZ_Profitability[New Alert Status],SMZ_Profitability[New Alerts Group],SMZ_Profitability[order_total],SMZ_Profitability[Attempt Count],SMZ_Profitability[is_refund]
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +Other
+		lineageTag: 6c398481-c91f-4bf6-9335-58a202e2a813
+
+	measure 'PNL_Alert Cost' =
+			'Alert $ Parameter'[Alert $ Value] * [## Alert]
+			// CALCULATE([$$ New Alert]*'Alert $ Parameter'[Alert $ Value])
+			// CALCULATE(SUM(SMZ_Profitability[Alert])*'Alert $ Parameter'[Alert $ Value])
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +Other
+		lineageTag: 94e81006-1371-4149-9cd4-83179959e711
+
+	measure 'PNL_Gross Profit' = [$$ New Revenue]-[$$ New Refund_alert]-[$$ New Refund_CS]-[New $CB]-[PNL_$ Fees]-[PNL_$ CB Fees]-[PNL_Product Cost]- [PNL_CPA Cost]-[PNL_Alert Cost]-[PNL_$ Reserve]
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +Other
+		lineageTag: 862c789a-e10b-41fe-9b28-f6f9e0cf1f09
+
+	measure 'PNL_Gross Margin' = DIVIDE([PNL_Gross Profit], [$$ New Revenue],0)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: +Other
+		lineageTag: b332e2b8-8724-421e-affc-76f4a1b1a2d0
+
+	measure 'PNL_# Approvals' = SUM(SMZ_Profitability[Approvals])
+		formatString: #,0
+		displayFolder: +Other
+		lineageTag: a1d94571-1d05-444b-9262-8f5f74d291ca
+
+	measure SALES_Initials = CALCULATE(SUM(SMZ_Profitability[Approvals]),FILTER(SMZ_Profitability,SMZ_Profitability[Sales Type]="Initials"))
+		formatString: #,0
+		displayFolder: +Sales
+		lineageTag: 7b43b2b0-0d61-429d-8485-753c288ad0f4
+
+	measure SALES_Initials_Revenue = CALCULATE(SUM(SMZ_Profitability[Revenue]),FILTER(SMZ_Profitability,SMZ_Profitability[Sales Type]="Initials"))
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: +Sales
+		lineageTag: e7275a10-3430-4918-bffe-cda47839e3bd
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure SALES_Rebills = CALCULATE(SUM(SMZ_Profitability[Approvals]),FILTER(SMZ_Profitability,SMZ_Profitability[Sales Type]="Rebills"))
+		formatString: #,0
+		displayFolder: +Sales
+		lineageTag: 72741a87-7338-4a97-b645-edb54566c371
+
+	measure SALES_Rebills_Revenue = CALCULATE(SUM(SMZ_Profitability[Revenue]),FILTER(SMZ_Profitability,SMZ_Profitability[Sales Type]="Rebills"))
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +Sales
+		lineageTag: 51dfac82-fed7-4672-95dc-bdbda26ff419
+
+	measure 'SALES_Straight Sales' = CALCULATE(SUM(SMZ_Profitability[Approvals]),FILTER(SMZ_Profitability,SMZ_Profitability[Sales Type]="Straight Sales"))
+		formatString: #,0
+		displayFolder: +Sales
+		lineageTag: c62864aa-425f-4d5d-85dc-7787589745c2
+
+	measure 'SALES_Straight Sales Revenue' = CALCULATE(SUM(SMZ_Profitability[Revenue]),FILTER(SMZ_Profitability,SMZ_Profitability[Sales Type]="Straight Sales"))
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +Sales
+		lineageTag: 4618ccc7-2a0e-4035-9f10-5e240969df39
+
+	measure 'SALES_AOV Initials' = DIVIDE([SALES_Initials_Revenue],[SALES_Initials])
+		displayFolder: +Sales
+		lineageTag: 11fb7a45-931c-498e-a0b1-52e524ddc512
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SALES_AOV Rebills' = DIVIDE([SALES_Rebills_Revenue],[SALES_Rebills])
+		displayFolder: +Sales
+		lineageTag: 11a29050-1677-4b0a-981b-149fabc5e4cf
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'PNL_$ Refund' = SUM(SMZ_Profitability[$ Refund])
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +RFND
+		lineageTag: e4d86ed2-ddb8-4e0c-bd91-48cfa4aa944f
+
+	measure 'PNL_# Refund' = SUM(SMZ_Profitability[# Refund])
+		formatString: #,0
+		displayFolder: +RFND
+		lineageTag: 937e1fc2-da87-4612-a6e3-8d9541d2827d
+
+	measure 'PNL_% Refund' = DIVIDE([PNL_# Refund],[PNL_# Approvals])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: +RFND
+		lineageTag: 8e659cf7-0342-47ad-bc92-ae4831cffe07
+
+	measure 'PNL_% Refund by Refund Date' = DIVIDE([PNL_# Refund by Refund Date],[PNL_# Approvals])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: +RFND
+		lineageTag: 9b07bb9d-ed60-4ce2-afa2-f3c162076ccc
+
+	measure 'PNL_$ CB' = SUM(SMZ_Profitability[$ CB])
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +CB
+		lineageTag: 36b86f78-1dc0-4b4a-8c13-75b715060975
+
+	measure 'PNL_# CB' = SUM(SMZ_Profitability[# CB])
+		formatString: #,0
+		displayFolder: +CB
+		lineageTag: 2c634374-84ad-4732-8de0-daee96808bd0
+
+	measure 'PNL_% CB by CB Date' = DIVIDE([PNL_# CB by CB Date],[PNL_# Approvals])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: +CB
+		lineageTag: 3dc0f679-8b57-45da-88f8-52b97eaa39b9
+
+	measure 'PNL_% CB' = DIVIDE([PNL_# CB],[PNL_# Approvals])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: +CB
+		lineageTag: 6900371e-aade-4f0d-89a7-94635eaffcd5
+
+	measure 'PNL_# CB by CB Date' = SUM(SMZ_Profitability[# CB by CB Date])
+		formatString: #,0
+		displayFolder: +CB
+		lineageTag: 4ec0c82a-c94a-47ad-a72f-12bb70365bbf
+
+	measure 'PNL_# Refund by Refund Date' = SUM(SMZ_Profitability[# Refund by Refund Date])
+		formatString: #,0
+		displayFolder: +RFND
+		lineageTag: dcd36e67-f79d-44cf-a0d4-b45f22559ae6
+
+	measure 'SUM_Initial Attempted' = SUM(SMZ_Profitability[Initial Attempt])
+		formatString: #,0
+		displayFolder: +SUM
+		lineageTag: 66c80aef-4ca2-4548-8768-0ddf59af13ec
+
+	measure 'SUM_Initial Approved' = SUM(SMZ_Profitability[Initial Approved])
+		formatString: #,0
+		displayFolder: +SUM
+		lineageTag: 88546f15-a1b0-4eca-adca-facbaf061fc5
+
+	measure 'SUM_Initial Approval Rate' = FORMAT(DIVIDE([SUM_Initial Approved],[SUM_Initial Attempted],0),"##.0%")
+		displayFolder: +SUM
+		lineageTag: d49b8dce-ef98-4b70-80ba-604b8843222d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SUM_Initial Cancel Rate' = FORMAT(DIVIDE(SUM(SMZ_Profitability[Initial Cancel Rate]),[SUM_Initial Approved],0),"##.0%")
+		displayFolder: +SUM
+		lineageTag: feec9a91-1b44-4aed-b674-9d8ff483e802
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SUM_Initial Refund Rate' = FORMAT(DIVIDE(SUM(SMZ_Profitability[Initial Refund Rate]),[SUM_Initial Approved],0),"##.0%")
+		displayFolder: +SUM
+		lineageTag: 411fc2ef-f442-4690-b4f4-736950f0bae3
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SUM_Initial CB Rate' = FORMAT(DIVIDE(SUM(SMZ_Profitability[Initial CB Rate]),[SUM_Initial Approved],0),"##.0%")
+		displayFolder: +SUM
+		lineageTag: b1091b96-d1aa-48ae-8e82-bec77de811b1
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SUM_Rebills Attempt' = SUM(SMZ_Profitability[Rebills Attempted])
+		formatString: #,0
+		displayFolder: +SUM
+		lineageTag: 2fa20d16-1984-4769-bd0a-33775bfc5eca
+
+	measure 'SUM_Rebills Approved' = SUM(SMZ_Profitability[Rebills Approved])
+		formatString: #,0
+		displayFolder: +SUM
+		lineageTag: 9651cf3f-8252-4e18-8317-de694f42db50
+
+	measure 'SUM_Rebills Approval Rate' = FORMAT(DIVIDE([SUM_Rebills Approved],[SUM_Initial Approved],0),"##.0%")
+		displayFolder: +SUM
+		lineageTag: 25d1e46e-af3b-4a13-a69c-adcd5d226a48
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SUM_Rebills Cancel Rate' = FORMAT(DIVIDE(SUM(SMZ_Profitability[Rebills Cancel Rate]),[SUM_Rebills Approved],0),"##.0%")
+		displayFolder: +SUM
+		lineageTag: d5389226-52e6-4f5e-bff1-adc3369751a1
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SUM_Rebills CB Rate' = FORMAT(DIVIDE(SUM(SMZ_Profitability[Rebills CB Rate]),[SUM_Rebills Approved],0),"##.0%")
+		displayFolder: +SUM
+		lineageTag: 1781bffe-e532-455e-85c4-0dab65e1f81d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SUM_Rebills Refund Rate' = FORMAT(DIVIDE(SUM(SMZ_Profitability[Rebills Refund Rate]),[SUM_Rebills Approved],0),"##.0%")
+		displayFolder: +SUM
+		lineageTag: 5363e234-0f0a-4b95-9699-8197c5e01a70
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'PNL_# Approvals_Visa' = CALCULATE([PNL_# Approvals],bin_lookup[card]="Visa")
+		formatString: #,0
+		displayFolder: +Other
+		lineageTag: 056c3376-24e5-4194-b28e-217d36c2476f
+
+	measure SALES_Revenue_Visa = CALCULATE([SALES_Revenue],bin_lookup[card]="Visa")
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +Sales
+		lineageTag: c1c76852-07d9-4d16-a5ff-8ed8e7a144fb
+
+	measure 'PNL_# Approvals_Master' = CALCULATE([PNL_# Approvals],bin_lookup[card]="Mastercard")
+		formatString: #,0
+		displayFolder: +Other
+		lineageTag: afc01400-e320-4bcf-9bcb-0b7432c4e259
+
+	measure SALES_Revenue_Master = CALCULATE([SALES_Revenue],bin_lookup[card]="Mastercard")
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +Sales
+		lineageTag: 2afc2b45-b3f4-4b9d-91b0-12e4841ba939
+
+	measure 'PNL_ # Approvals_PP' =
+			
+			VAR SelectedStartDate = MIN('Calendar'[Date])
+			VAR SelectedEndDate = MAX('Calendar'[Date])
+			VAR DaysInSelectedPeriod = DATEDIFF(SelectedStartDate, SelectedEndDate, DAY)
+			VAR PreviousPeriodStartDate = SelectedStartDate - 30
+			VAR PreviousPeriodEndDate = PreviousPeriodStartDate + DaysInSelectedPeriod
+			RETURN
+			CALCULATE(
+			    [PNL_# Approvals],
+			    FILTER(
+			        ALL('Calendar'),
+			        'Calendar'[Date] >= PreviousPeriodStartDate &&
+			        'Calendar'[Date] <= PreviousPeriodEndDate
+			    )
+			)
+		displayFolder: +Other
+		lineageTag: a8b38108-993d-45b0-b207-b9226b681e2c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'PNL_# Approvals_PP_Master' = CALCULATE([PNL_ # Approvals_PP],bin_lookup[card]="Mastercard")
+		displayFolder: +Other
+		lineageTag: d4073989-515a-4a5b-830f-3f298515afc0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'PNL_# Refund by Refund Date_alert' = CALCULATE(SUM(SMZ_Profitability[# Refund by Refund Date]),SMZ_Profitability[New Alerts Group2] = "Refund Alert")
+		formatString: #,0
+		displayFolder: +RFND
+		lineageTag: 91d1e2f8-0f38-4df1-b169-4417b3658b5b
+
+	measure 'PNL_# Refund by Refund Date_CS' = CALCULATE(SUM(SMZ_Profitability[# Refund by Refund Date]),SMZ_Profitability[New Alerts Group2] = "Refund CS")
+		formatString: #,0
+		displayFolder: +RFND
+		lineageTag: a98064dd-9ebe-4a78-8625-32d7f5466ed6
+
+	measure 'PNL_# Refund_alert' = CALCULATE(SUM(SMZ_Profitability[# Refund]),SMZ_Profitability[New Alerts Group2] = "Refund Alert")
+		formatString: #,0
+		displayFolder: +RFND
+		lineageTag: 7681e574-28ad-4462-82cb-bcea594aef66
+
+	measure 'PNL_# Refund_CS' = CALCULATE(SUM(SMZ_Profitability[# Refund]),SMZ_Profitability[New Alerts Group2] = "Refund CS")
+		formatString: #,0
+		displayFolder: +RFND
+		lineageTag: 0d9a065c-8916-4e37-9e76-29cea1bf0f22
+
+	measure 'PNL_$ Refund by Refund Date_alert' = CALCULATE(SUM(SMZ_Profitability[$ Refund by Refund Date]),SMZ_Profitability[New Alerts Group2]="Refund Alert")
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +RFND
+		lineageTag: d126a434-cb41-41df-a2a1-8f1a799f9f7b
+
+	measure 'PNL_$ Refund by Refund Date_CS' = CALCULATE(SUM(SMZ_Profitability[$ Refund by Refund Date]),SMZ_Profitability[New Alerts Group2]="Refund CS")
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +RFND
+		lineageTag: d666ce09-4184-409a-86bb-0825b2bf49e2
+
+	measure 'PNL_$ Refund_alert' = CALCULATE(SUM(SMZ_Profitability[$ Refund]),SMZ_Profitability[New Alerts Group2] = "Refund Alert")
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +RFND
+		lineageTag: bc76c43a-d156-4b1b-94d1-2396dcc24803
+
+	measure 'PNL_$ Refund_CS' = CALCULATE(SUM(SMZ_Profitability[$ Refund]),SMZ_Profitability[New Alerts Group2] = "Refund CS")
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +RFND
+		lineageTag: 72608374-1e5e-4e96-a6ca-28366ac530e1
+
+	measure 'PNL_% Refund by Refund Date_alert' = DIVIDE([PNL_# Refund by Refund Date_alert],[PNL_# Approvals])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: +RFND
+		lineageTag: c21d4a4b-df10-4024-9414-1156518580b3
+
+	measure 'PNL_% Refund_alert' = DIVIDE([PNL_# Refund_alert],[PNL_# Approvals])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: +RFND
+		lineageTag: e522e856-b6dd-4a2a-95bf-cf6ad77fd203
+
+	measure 'PNL_% Refund_CS' = DIVIDE([PNL_# Refund_CS],[PNL_# Approvals])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: +RFND
+		lineageTag: 17290584-e5c5-4e7d-9ffa-1256c42840e3
+
+	measure 'PNL_% Refund by Refund Date_CS' = DIVIDE([PNL_# Refund by Refund Date_CS],[PNL_# Approvals])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: +RFND
+		lineageTag: ab38fa04-5bcd-46b8-86e9-cfd94572fcbe
+
+	measure 'PNL_$ Reserve' = [$$ New Revenue]*'Reserve $'[Reserve $]/100
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +Other
+		lineageTag: 17bc3163-dcb4-46f6-a3ba-2641052bae41
+
+	measure 'PNL_$ Refund by Initial Date' = SUM(SMZ_Profitability[$ Refund by Initial Date])
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +RFND
+		lineageTag: 79dd9682-c01e-439d-8d7b-1c5eaaddfe1c
+
+	measure 'PNL_$ CB by Initial Date' = SUM(SMZ_Profitability[$ CB by Initial Date])
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +CB
+		lineageTag: 541f14a3-dbc9-44d8-a1f7-77a0bf79d2cc
+
+	measure 'PNL_# CB by Initial Date' = SUM(SMZ_Profitability[# CB by Initial Date])
+		formatString: #,0
+		displayFolder: +CB
+		lineageTag: ac2993f7-46c4-4be0-9b33-6c821d11235c
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'PNL_# Refund by Initial Date_alert' = CALCULATE(SUM(SMZ_Profitability[# Refund by Initial Date]),SMZ_Profitability[New Alerts Group2] = "Refund Alert")
+		formatString: #,0
+		displayFolder: +RFND
+		lineageTag: d363a41e-4303-4e11-a7c4-ac620e7f57a4
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'PNL_# Refund by Initial Date_CS' = CALCULATE(SUM(SMZ_Profitability[# Refund by Initial Date]),SMZ_Profitability[New Alerts Group2] = "Refund CS")
+		formatString: #,0
+		displayFolder: +RFND
+		lineageTag: 7ea66f16-a5f1-49ee-9df7-318a60892bc5
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'PNL_# Refund by Initial Date' = SUM(SMZ_Profitability[# Refund by Initial Date])
+		formatString: #,0
+		displayFolder: +RFND
+		lineageTag: e675bf1f-6383-436b-a4ea-064134b691c0
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'PNL_$ Refund by Initial Date_CS' = CALCULATE(SUM(SMZ_Profitability[$ Refund by Initial Date]),SMZ_Profitability[New Alerts Group2]="Refund CS")
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +RFND
+		lineageTag: e2694dfb-5616-40eb-b8f3-2757f3d9e254
+
+	measure 'PNL_$ Refund by Initial Date_alert' = CALCULATE(SUM(SMZ_Profitability[$ Refund by Initial Date]),SMZ_Profitability[New Alerts Group2]="Refund Alert")
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +RFND
+		lineageTag: 2e53473d-3efe-45b9-916d-7a3118fca4c6
+
+	measure 'PNL_$ Revenue by Initial Date' = Sum(SMZ_Profitability[$ Revenue by Initial Date])
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +Other
+		lineageTag: 4cce523e-90f8-4fc3-b6a4-4be1da236159
+
+	measure 'PNL_# Refund by Refund Date_alert_RDR' = CALCULATE([PNL_# Refund by Refund Date_alert],SMZ_Profitability[New Alert Status] = "Refund RDR")
+		formatString: #,0
+		displayFolder: +RFND
+		lineageTag: 7908261c-0a82-4d7c-b1e5-8502ae03aa74
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'PNL_# Refund by Refund Date_alert_Ethoca' = CALCULATE([PNL_# Refund by Refund Date_alert],SMZ_Profitability[New Alert Status] = "Refund Ethoca")
+		formatString: #,0
+		displayFolder: +RFND
+		lineageTag: 969595f8-7465-4c25-97c9-ec817e46bd5a
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'PNL_% Refund by Refund Date_alert_RDR' = DIVIDE([PNL_# Refund by Refund Date_alert_RDR],[PNL_# Approvals])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: +RFND
+		lineageTag: 5fb3f257-9461-49b8-b28b-8b8ed09470c1
+
+	measure 'PNL_% Refund by Refund Date_alert_Ethoca' = DIVIDE([PNL_# Refund by Refund Date_alert_Ethoca],[PNL_# Approvals])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: +RFND
+		lineageTag: 70278b16-444b-417e-80df-50f058d4123d
+
+	measure 'PNL_$ Refund by Refund Date_alert_Ethoca' = CALCULATE([PNL_$ Refund by Refund Date_alert],SMZ_Profitability[New Alert Status] = "Refund Ethoca")
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +RFND
+		lineageTag: ecbf0205-546a-43a7-9a5e-feef5d2c29c1
+
+	measure 'PNL_$ Refund by Refund Date_alert_RDR' = CALCULATE([PNL_$ Refund by Refund Date_alert],SMZ_Profitability[New Alert Status] = "Refund RDR")
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +RFND
+		lineageTag: c0f4eaae-b2b3-4f7c-b768-dfef4e369b3b
+
+	measure 'PNL_# Refund by Initial Date_alert_Ethoca' = CALCULATE([PNL_# Refund by Initial Date_alert],SMZ_Profitability[New Alert Status] = "Refund Ethoca")
+		formatString: #,0
+		displayFolder: +RFND
+		lineageTag: a0448f4f-02b3-4da3-b835-61f4b5f4bc54
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'PNL_# Refund by Initial Date_alert_RDR' = CALCULATE([PNL_# Refund by Initial Date_alert],SMZ_Profitability[New Alert Status] = "Refund RDR")
+		formatString: #,0
+		displayFolder: +RFND
+		lineageTag: ec84722c-3468-4c17-b876-d6969261ae5b
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'PNL_$ Refund by Initial Date_alert_Ethoca' = CALCULATE([PNL_$ Refund by Initial Date_alert],SMZ_Profitability[New Alert Status] = "Refund Ethoca")
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +RFND
+		lineageTag: ad5fce9e-d3f4-4cd8-b896-833d2b18ec24
+
+	measure 'PNL_$ Refund by Initial Date_alert_RDR' = CALCULATE([PNL_$ Refund by Initial Date_alert],SMZ_Profitability[New Alert Status] = "Refund RDR")
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +RFND
+		lineageTag: 6a82f49a-6bf0-459b-b454-14fc768623b1
+
+	measure 'PNL_# Refund_alert_RDR' = CALCULATE([PNL_# Refund_alert],SMZ_Profitability[New Alert Status] = "Refund RDR")
+		formatString: #,0
+		displayFolder: +RFND
+		lineageTag: 7f42b9c3-e2d4-4096-9a39-d36956a916ae
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'PNL_# Refund_alert_Ethoca' = CALCULATE([PNL_# Refund_alert],SMZ_Profitability[New Alert Status] = "Refund Ethoca")
+		formatString: #,0
+		displayFolder: +RFND
+		lineageTag: 156df79c-83ca-4342-a19d-93b2b07dc582
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'PNL_$ Refund_alert_Ethoca' = CALCULATE([PNL_$ Refund_alert],SMZ_Profitability[New Alert Status] = "Refund Ethoca")
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +RFND
+		lineageTag: 01aa672b-1e8f-40ec-98a6-aeabfec50d33
+
+	measure 'PNL_$ Refund_alert_RDR' = CALCULATE([PNL_$ Refund_alert],SMZ_Profitability[New Alert Status] = "Refund RDR")
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +RFND
+		lineageTag: 07fd3e9d-f6e3-4fec-9207-ef283e67b904
+
+	measure 'PNL_% Refund_alert_RDR' = DIVIDE([PNL_# Refund_alert_RDR],[PNL_# Approvals])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: +RFND
+		lineageTag: 29c019cb-457f-4171-8794-0997799462d7
+
+	measure 'PNL_% Refund_alert_Ethoca' = DIVIDE([PNL_# Refund_alert_Ethoca],[PNL_# Approvals])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: +RFND
+		lineageTag: 4f146475-5843-49ee-b8e0-5c0fb3c14e78
+
+	measure 'PNL_% Refund by Initial Date_alert' = DIVIDE([PNL_# Refund by Initial Date_alert],[PNL_# Approvals])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: +RFND
+		lineageTag: 0f54e9b9-7290-4964-be59-0d0255e9dd93
+
+	measure 'PNL_% Refund by Initial Date_alert_RDR' = DIVIDE([PNL_# Refund by Initial Date_alert_RDR],[PNL_# Approvals])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: +RFND
+		lineageTag: 9e5bf890-d355-4ba3-9585-f947df4c297c
+
+	measure 'PNL_% Refund by Initial Date_alert_Ethoca' = DIVIDE([PNL_# Refund by Initial Date_alert_Ethoca],[PNL_# Approvals])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: +RFND
+		lineageTag: 85070783-6fd5-4f1b-81d6-a285429772d5
+
+	measure PNL_CPA_Parameter = ```
+			[PNL_Initials CPA] * 'CPA $ Parameter'[CPA Value] 
+			```
+		displayFolder: +Other
+		lineageTag: ba0ac00c-bd11-4bb3-af6e-a696f3eea132
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure PNL_CPA_Column = sum(SMZ_Profitability[Final_CPA_Prod_Camp_Val])
+		displayFolder: +Other
+		lineageTag: 391a195c-c8f8-47ea-af31-f985a5b86c60
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure PNL_Alert = CALCULATE(SUM(SMZ_Profitability[Alert]),SMZ_Profitability[New Alerts Group2]="Refund Alert")
+		formatString: #,0
+		displayFolder: +Other
+		lineageTag: 906a43e9-72b0-46aa-8d0e-4368f79cd387
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'PNL_Alert by Alert Date' = SUM(SMZ_Profitability[Alert by Alert Date])
+		formatString: #,0
+		displayFolder: +Other
+		lineageTag: 3e56c90d-bf9b-4170-a6c3-4cdc0d536a2a
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'PNL_Alert by Initial Date' = SUM(SMZ_Profitability[Alert by Initial Date])
+		formatString: #,0
+		displayFolder: +Other
+		lineageTag: 57aad539-2284-4c95-88fe-f6bf5a8bd72a
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'PNL_$ CB Fees' = ```
+			([New #CB]*'CB fees $ Parameter'[CB Fees Value]) 
+			```
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: +Other
+		lineageTag: 16e6187f-284e-4365-aa2f-39568b0f5ff5
+
+	column Approvals
+		formatString: 0
+		lineageTag: 44ac0b8f-fcfa-478f-b4da-5742b7eae374
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Approvals]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Revenue
+		lineageTag: 9e40d6f2-543e-4996-a8f0-ba6c004413ef
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Revenue]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Alert
+		formatString: 0
+		lineageTag: 674639d3-f551-4c75-8de3-4f48707c6b59
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Alert]
+
+		annotation SummarizationSetBy = Automatic
+
+	column '$ Refund by Refund Date'
+		lineageTag: c3f19b38-47a2-4e5c-92af-bcc01c86ea6e
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [$ Refund by Refund Date]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column '$ CB by CB Date'
+		lineageTag: ebbc98dd-00ba-41b4-8418-cee6e5dd02ac
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [$ CB by CB Date]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column '# CB by CB Date'
+		formatString: 0
+		lineageTag: dc4c5309-ae34-42ed-8d27-7d4a8b6ae622
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [# CB by CB Date]
+
+		annotation SummarizationSetBy = Automatic
+
+	column '# Refund by Refund Date'
+		formatString: 0
+		lineageTag: 601c7c15-2a81-4a7b-8001-d1bbfdc10b73
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [# Refund by Refund Date]
+
+		annotation SummarizationSetBy = Automatic
+
+	column '# Refund'
+		formatString: 0
+		lineageTag: dc5c0f53-5993-49d5-a63d-0fcaebe32fbd
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [# Refund]
+
+		annotation SummarizationSetBy = Automatic
+
+	column '$ Refund'
+		lineageTag: fde587db-12f4-4a7a-85fd-d3f5037a55c8
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [$ Refund]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column '# CB'
+		formatString: 0
+		lineageTag: c37e1ab0-74c4-4388-a74e-ebf1ced15b3c
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [# CB]
+
+		annotation SummarizationSetBy = Automatic
+
+	column '$ CB'
+		lineageTag: 2b6e2662-c468-4b0b-8eca-77b007953a94
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [$ CB]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Initial Attempt'
+		formatString: 0
+		lineageTag: 9f14ae62-f259-4ed7-bac7-63089ec5e240
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Initial Attempt]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Initial Approved'
+		formatString: 0
+		lineageTag: f3cbb1fb-6fe1-4f83-a69c-3aaf01cb9cc5
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Initial Approved]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Initial Cancel Rate'
+		lineageTag: 0cfdc705-b02c-4c32-81e9-4c5d962981a2
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Initial Cancel Rate]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Initial Refund Rate'
+		lineageTag: 26761b27-df48-4fbe-a513-6f0f03af6cbb
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Initial Refund Rate]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Initial CB Rate'
+		lineageTag: c5c871e9-caa1-47f5-9453-b16c203bd231
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Initial CB Rate]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Rebills Attempted'
+		formatString: 0
+		lineageTag: 705fcd28-6ddd-4e7d-9cc4-01973f0c34b6
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Rebills Attempted]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Rebills Approved'
+		formatString: 0
+		lineageTag: 8bf2de16-eb94-485f-871e-70e8f93b967f
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Rebills Approved]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Rebills Cancel Rate'
+		lineageTag: a104ffea-3504-45f6-a89e-7580720f353c
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Rebills Cancel Rate]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Rebills Refund Rate'
+		lineageTag: ac806740-5fd7-418d-b5d9-9f0bcb85667c
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Rebills Refund Rate]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Rebills CB Rate'
+		lineageTag: 7135cd04-42e4-4a25-ad65-26ef89b0c48c
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Rebills CB Rate]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column '$ Refund by Initial Date'
+		lineageTag: d4a48163-e0a9-4dd9-a0f5-b95f1c6c4b0a
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [$ Refund by Initial Date]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column '$ CB by Initial Date'
+		lineageTag: f3df5ad0-d8a3-40c4-ae90-21695fc00711
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [$ CB by Initial Date]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column '# CB by Initial Date'
+		formatString: 0
+		lineageTag: a2abc5b6-c32d-43dd-b01c-cf95662a3bd1
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [# CB by Initial Date]
+
+		annotation SummarizationSetBy = Automatic
+
+	column '# Refund by Initial Date'
+		formatString: 0
+		lineageTag: e919c8c5-531a-4f63-b552-32bda918e392
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [# Refund by Initial Date]
+
+		annotation SummarizationSetBy = Automatic
+
+	column '$ Revenue by Initial Date'
+		lineageTag: bdc45d8b-866d-439f-9a2b-58aaa47fcb4c
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [$ Revenue by Initial Date]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Date
+		formatString: General Date
+		lineageTag: 72e2ad7e-45d1-43c3-9b85-8786f88bae3c
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: Calendar[Date]
+
+		annotation SummarizationSetBy = Automatic
+
+	column campaign_id
+		formatString: 0
+		lineageTag: 5c6fe096-2304-483d-a47a-8b94678a3e0a
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: order_details[campaign_id]
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_id
+		formatString: 0
+		lineageTag: ab8d0d93-d9e3-4065-a581-fb9f75baab71
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: order_details[product_id]
+
+		annotation SummarizationSetBy = Automatic
+
+	column gateway_id
+		formatString: 0
+		lineageTag: 0d23004d-90e2-4671-8310-b8746895b5b9
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: order_details[gateway_id]
+
+		annotation SummarizationSetBy = Automatic
+
+	column BIN
+		lineageTag: 64f3a806-e07f-43cc-a76c-1a45254b038a
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: order_details[BIN]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Billing Cycle'
+		lineageTag: 6db686c4-a13b-496a-ab81-d24d1ea33c43
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: order_details[Billing Cycle]
+
+		annotation SummarizationSetBy = Automatic
+
+	column affid
+		lineageTag: 5ad688e4-ec17-4a5a-add3-6343e03ca232
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: order_details[affid]
+
+		annotation SummarizationSetBy = Automatic
+
+	column sub_affid
+		lineageTag: 12bfb661-6d22-4156-bc58-85beeab30697
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: order_details[sub_affid]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sales Type'
+		lineageTag: f8cb3cc4-e470-4674-b984-4ff6e9ee90f7
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: order_details[Sales Type]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'New Alert Status'
+		lineageTag: 733a4b26-1575-4640-92b4-3e4e549b80e2
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: order_details[New Alert Status]
+
+		annotation SummarizationSetBy = Automatic
+
+	column order_total
+		lineageTag: 0c0ddd22-68f9-445f-a209-ce806239c394
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: order_details[order_total]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Attempt Count'
+		lineageTag: 2f108e85-5ad0-4201-bd38-348613525e86
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: order_details[Attempt Count]
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_refund
+		lineageTag: 001819e2-4cd2-4f14-bbb3-255c15713690
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: order_details[is_refund]
+
+		annotation SummarizationSetBy = Automatic
+
+	column campaign_cpa = CALCULATE(sum(campaigns[cpa]),FILTER(campaigns,campaigns[campaign_id]=EARLIER(SMZ_Profitability[campaign_id])))
+		isHidden
+		lineageTag: 2cf9173b-efcf-47e1-9458-74347b9c30c1
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column product_cpa = CALCULATE(sum(products[cpa]),FILTER(products,products[product_id]=EARLIER(SMZ_Profitability[product_id])))
+		isHidden
+		lineageTag: 3a4b86e2-86e2-47ff-b0b8-cbfd2222ea63
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column cpa = IF(SMZ_Profitability[campaign_cpa]>0,SMZ_Profitability[campaign_cpa],SMZ_Profitability[product_cpa])
+		isHidden
+		lineageTag: 179009dd-770b-4f02-975a-0d3f7d741c87
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Final_CPA_Prod_Camp_Val = [PNL_Initials CPA]*SMZ_Profitability[cpa]
+		formatString: 0
+		lineageTag: bcacb030-16dc-4b2c-acc9-b30663264650
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Approvals by Initial Date'
+		formatString: 0
+		lineageTag: 3a5cdc75-4294-4d07-b0a7-f1ffed9d4d10
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Approvals by Initial Date]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Alert by Alert Date'
+		formatString: 0
+		lineageTag: 5fdc4e12-c2b1-47b7-823e-c1289f041553
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Alert by Alert Date]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Alert by Initial Date'
+		formatString: 0
+		lineageTag: 23e8a2ec-1d24-484b-ad78-7169b8cb748e
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Alert by Initial Date]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'New Alerts Group2'
+		lineageTag: 995195b9-53e2-4cfa-a1cb-89c054350a80
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: order_details[New Alerts Group2]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition SMZ_Profitability = calculated
+		mode: import
+		source = ```
+				
+				FILTER (
+				    SUMMARIZECOLUMNS (
+				        'Calendar'[Date],
+				        order_details[campaign_id],
+				        order_details[product_id],
+				        order_details[gateway_id],
+				        order_details[BIN],
+				        order_details[Billing Cycle],
+				        order_details[affid],
+				        order_details[sub_affid],
+				        order_details[Sales Type],
+				        order_details[New Alert Status],
+				        // order_details[New Alerts Group],
+				        order_details[New Alerts Group2],
+				        order_details[order_total],
+				        order_details[Attempt Count],
+				        order_details[is_refund],
+				        "Approvals", [SMZ_PNL_Approvals],
+				        "Approvals by Initial Date",[# Approved by Initial Date],
+				        
+				        "Revenue", [SMZ_PNL_Revenue],
+				        "$ Revenue by Initial Date", [$ Revenue by Initial Date],
+				
+				        "# Refund", [SMZ_PNL_# Refund],
+				        "# Refund by Refund Date", [SMZ_PNL_# Refund by (Refund Date)],
+				        "# Refund by Initial Date", [## Refund by (Initial Date)], --
+				        
+				        "$ Refund", [SMZ_PNL_$ Refund],
+				        "$ Refund by Refund Date", [SMZ_PNL_$ Refund by (Refund Date)],
+				        "$ Refund by Initial Date", [$$ Refund by (Initial Date)], --
+				
+				        "# CB", [SMZ_PNL_# CB],
+				        "# CB by CB Date", [SMZ_PNL_# CB (by CB_Date)],
+				        "# CB by Initial Date", [# CB (by Initial Date)], --
+				
+				        "$ CB", [SMZ_PNL_$ CB],
+				        "$ CB by CB Date", [SMZ_PNL_$ CB (by CB_Date)],
+				        "$ CB by Initial Date",[$ CB (by Initial Date)], --
+				                
+				        "Alert", [SMZ_PNL_ALert],
+				        "Alert by Alert Date", [SMZ_PNL_Alert by Alert Date],
+				        "Alert by Initial Date", [SMZ_PNL_Alert by Initial Date],
+				
+				        "Initial Attempt", [Initial Attempted],
+				        "Initial Approved", [Initials],
+				        "Initial Cancel Rate", [Initial Cancel Rate],
+				        "Initial Refund Rate", [Initial Refund Rate],
+				        "Initial CB Rate", [Initial CB Rate],
+				        "Rebills Attempted", [Rebills Attempted],
+				        "Rebills Approved", [Rebills Approved],
+				        "Rebills Cancel Rate", [Rebills Cancel Rate],
+				        "Rebills Refund Rate", [Rebills Refund Rate],
+				        "Rebills CB Rate", [Rebills CB Rate]
+				    ),
+				    'Calendar'[Date] <> BLANK ()
+				)
+				
+				```
+
+	annotation PBI_Id = 1b97fd3f7c7c4dce89005c6b65f88926
+

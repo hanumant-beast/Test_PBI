@@ -1,0 +1,122 @@
+table offers
+	lineageTag: 26917507-8646-4d53-8bf0-e82819d737b0
+
+	column campaign_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 2ab37143-a17d-4903-a4ed-a7cca6ff4003
+		summarizeBy: none
+		sourceColumn: campaign_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column campaign_name
+		dataType: string
+		lineageTag: 848f3e83-68e6-47f0-b761-dfed6f177b32
+		summarizeBy: none
+		sourceColumn: campaign_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column offer_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 73590566-736b-4512-a170-e2b823cfbbf7
+		summarizeBy: sum
+		sourceColumn: offer_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column Offer
+		dataType: string
+		lineageTag: 6dc99440-be9f-47ae-94f5-dd79ea65a0ce
+		summarizeBy: none
+		sourceColumn: Offer
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_id
+		dataType: int64
+		formatString: 0
+		lineageTag: bae32fc5-76ac-4085-8450-fed905f956e1
+		summarizeBy: none
+		sourceColumn: product_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_name
+		dataType: string
+		lineageTag: fb2927c5-95f0-4ad6-91ab-63ad4f573656
+		summarizeBy: none
+		sourceColumn: product_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column billing_model_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 0b2c7fd0-8cbd-45ab-be15-c01716bfc24c
+		summarizeBy: sum
+		sourceColumn: billing_model_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column billing_model_name
+		dataType: string
+		lineageTag: f94244d1-2e46-4ffc-aa09-8f9db659c31d
+		summarizeBy: none
+		sourceColumn: billing_model_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column crm
+		dataType: string
+		lineageTag: b4354ea6-7002-43d9-82bd-c5e8b4cf606a
+		summarizeBy: none
+		sourceColumn: crm
+
+		annotation SummarizationSetBy = Automatic
+
+	column client_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 8736dcd5-3a96-4305-bf20-7bba9f15ca96
+		summarizeBy: sum
+		sourceColumn: client_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column client_name
+		dataType: string
+		lineageTag: e561740c-9535-4fbd-863c-cf6697d87132
+		summarizeBy: none
+		sourceColumn: client_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column id
+		dataType: int64
+		formatString: 0
+		lineageTag: 6abaaeb0-c62f-4af8-ba67-1fe652911686
+		summarizeBy: sum
+		sourceColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	partition offers = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database(server, Database),
+				    public_offer = Source{[Schema="public",Item="offers"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(public_offer,{{"offer_id", Int64.Type}, {"product_id", Int64.Type}, {"billing_model_id", Int64.Type}}),
+				    #"Filtered Rows" = Table.SelectRows(#"Changed Type", each [crm] = crm or [crm] = crm2 or [crm] = crm3  or [crm] = crm4),
+				    #"Filtered Rows1" = Table.SelectRows(#"Filtered Rows", each [client_id] = client_id),
+				    #"Renamed Columns" = Table.RenameColumns(#"Filtered Rows1",{{"offer_name", "Offer"}, {"product_name", "product_name"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

@@ -1,0 +1,208 @@
+table products
+	lineageTag: 50617181-4f67-438f-b151-e1783412f613
+
+	column product_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 1753e256-8998-46fc-b1fd-d1209bf9cc3b
+		summarizeBy: none
+		sourceColumn: product_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column Product
+		dataType: string
+		lineageTag: 26e6a812-d353-46c6-a6e9-8f4dae22a681
+		summarizeBy: none
+		sourceColumn: Product
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_description
+		dataType: string
+		lineageTag: d859b86b-ee47-49c7-85d6-f75f606d3cea
+		summarizeBy: none
+		sourceColumn: product_description
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_sku
+		dataType: string
+		lineageTag: ee9e30ab-0328-41b3-8744-7fe8f5744a4f
+		summarizeBy: none
+		sourceColumn: product_sku
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_price
+		dataType: double
+		lineageTag: 44f06ea1-fa6a-4dc7-9737-3be995821079
+		summarizeBy: sum
+		sourceColumn: product_price
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column vertical_name
+		dataType: string
+		lineageTag: 3b4ccae6-c269-4b07-b1a6-bc88f0506bc0
+		summarizeBy: none
+		sourceColumn: vertical_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_is_shippable
+		dataType: int64
+		formatString: 0
+		lineageTag: b813c580-540a-4f3f-a6c7-4099bce524d0
+		summarizeBy: sum
+		sourceColumn: product_is_shippable
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_max_quantity
+		dataType: int64
+		formatString: 0
+		lineageTag: a6a98b6c-09ad-4db1-87bd-1d33d0c982ab
+		summarizeBy: sum
+		sourceColumn: product_max_quantity
+
+		annotation SummarizationSetBy = Automatic
+
+	column cost_of_goods_sold
+		dataType: int64
+		formatString: 0
+		lineageTag: 1fd64b9f-bb18-4d96-adc7-4ffb8c7ffd99
+		summarizeBy: sum
+		sourceColumn: cost_of_goods_sold
+
+		annotation SummarizationSetBy = Automatic
+
+	column crm
+		dataType: string
+		lineageTag: c3ff8e76-d1b5-4f0d-9cab-2aca9bd11a06
+		summarizeBy: none
+		sourceColumn: crm
+
+		annotation SummarizationSetBy = Automatic
+
+	column client_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 7973edd5-6f1e-44c1-b888-46b182ba3314
+		summarizeBy: sum
+		sourceColumn: client_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column client_name
+		dataType: string
+		lineageTag: 0d24342c-1e90-488e-9c4c-f10285de02f1
+		summarizeBy: none
+		sourceColumn: client_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_group
+		dataType: string
+		lineageTag: 1f9048c0-a4c9-4a2d-9372-4d10b21646d1
+		summarizeBy: none
+		sourceColumn: product_group
+
+		annotation SummarizationSetBy = Automatic
+
+	column subscription_flag
+		dataType: int64
+		formatString: 0
+		lineageTag: fbbb107d-f5dd-4c15-b70b-fd28197f5f3b
+		summarizeBy: sum
+		sourceColumn: subscription_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_cost
+		dataType: double
+		lineageTag: 4019838a-a44d-43f0-bcb1-7de44d9163b4
+		summarizeBy: sum
+		sourceColumn: product_cost
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column cpa
+		dataType: double
+		lineageTag: 6563d898-a695-4c6b-89d5-81ddbf25dc3d
+		summarizeBy: sum
+		sourceColumn: cpa
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column is_initial
+		dataType: int64
+		formatString: 0
+		lineageTag: 735540c0-9e13-49fb-a489-21a87dfe2048
+		summarizeBy: sum
+		sourceColumn: is_initial
+
+		annotation SummarizationSetBy = Automatic
+
+	column id
+		dataType: int64
+		formatString: 0
+		lineageTag: 4554af38-207b-4a40-a32e-bd9065a8a5cf
+		summarizeBy: sum
+		sourceColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_exclude
+		dataType: int64
+		formatString: 0
+		lineageTag: 94b25d27-a377-496a-8de2-6e538a0ca45f
+		summarizeBy: sum
+		sourceColumn: is_exclude
+
+		annotation SummarizationSetBy = Automatic
+
+	column subscription_type
+		dataType: int64
+		formatString: 0
+		lineageTag: 4e065df7-814e-4ba0-a841-7530dcd67798
+		summarizeBy: sum
+		sourceColumn: subscription_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_product_group_filled_with_ai
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 0b100679-a34c-4065-9178-0a94dade26c4
+		summarizeBy: none
+		sourceColumn: is_product_group_filled_with_ai
+
+		annotation SummarizationSetBy = Automatic
+
+	partition products = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database(server, Database),
+				    public_products = Source{[Schema="public",Item="products"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(#"public_products",{{"product_id", Int64.Type}, {"product_name", type text}, {"product_description", type text}, {"product_sku", type text}, {"product_price", type number}, {"vertical_name", type any}, {"product_is_shippable", Int64.Type}, {"product_max_quantity", Int64.Type}, {"cost_of_goods_sold", Int64.Type}, {"crm", type text}, {"client_id", Int64.Type}, {"client_name", type text}, {"product_group", type text}, {"subscription_flag", Int64.Type}}),
+				    #"Filtered Rows" = Table.SelectRows(#"Changed Type", each [crm] = crm or [crm] = crm2 or [crm] = crm3  or [crm] = crm4),
+				    #"Filtered Rows1" = Table.SelectRows(#"Filtered Rows", each [client_id] = client_id),
+				    #"Renamed Columns" = Table.RenameColumns(#"Filtered Rows1",{{"product_name", "Product"}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Renamed Columns",{"subscription_flag"}),
+				    #"Added Conditional Column" = Table.AddColumn(#"Removed Columns", "subscription_flag", each if [subscription_type] <= 3 then 1 else 0),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Added Conditional Column",{{"subscription_flag", Int64.Type}})
+				in
+				    #"Changed Type1"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

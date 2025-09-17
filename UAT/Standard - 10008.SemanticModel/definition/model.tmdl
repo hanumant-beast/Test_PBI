@@ -1,0 +1,86 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		fastCombine
+		legacyRedirects
+		returnErrorValuesAsNull
+
+queryGroup Parameters
+
+	annotation PBI_QueryGroupOrder = 1
+
+annotation PBI_QueryOrder = ["order_details","order_chargebacks","order_alerts","payments","campaigns","products","bin_lookup","subscription_control","offers","crm","client_id","server","Database","master_clients","crm2","crm3","Removing Pending Rebills","CB/Refund Date","Theme","Retention Base","crm4","CB_Alert","Card Type Table","MID Filter","CPA $ Parameter","Processing Fee % Parameter","CB fees $ Parameter","Alert $ Parameter","Profitability Table","Reserve $"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_ProTooling = ["CalcGroup","WebModelingEdit","DaxQueryView_Desktop"]
+
+annotation __TEdtr = 1
+
+annotation __BNorm = 1
+
+ref table DateTableTemplate_f45c6b71-d21e-4285-819e-49458eefd0f0
+ref table Calendar
+ref table LocalDateTable_f03d4fb8-037b-4eb4-955e-314f261bddc2
+ref table payments
+ref table LocalDateTable_fdd209bf-2710-454b-97e0-863739e82f57
+ref table campaigns
+ref table products
+ref table order_details
+ref table LocalDateTable_f0a646c1-5e81-491f-a795-ac5408bb1f65
+ref table LocalDateTable_fdaefb1e-e8b5-479d-b53c-69f8067b302d
+ref table bin_lookup
+ref table LocalDateTable_4b5ccced-58bb-4b89-adb7-c31bc9c39b76
+ref table LocalDateTable_657970bc-179f-4610-93b9-f067bca528c9
+ref table offers
+ref table 'Date Selection'
+ref table master_clients
+ref table 'Retention Selection'
+ref table 'Calculation group'
+ref table 'Removing Pending Rebills'
+ref table 'CB & Refund Parameter'
+ref table 'CB/Refund Date'
+ref table order_alerts
+ref table 'Alert Parameter'
+ref table WaterfallCategories
+ref table approval_rate
+ref table subscription_control
+ref table SMZ_Profitability
+ref table PricePoint
+ref table '% Refund, CB and Cancel Parameter'
+ref table LocalDateTable_0d198ef9-cc15-4385-a582-2f6ff4729a04
+ref table LocalDateTable_c09cf899-8442-4b30-bdec-0a4b2e9bbdc3
+ref table 'CB/Refund Month Parameter'
+ref table 'CB/Refund No of Days Parameter'
+ref table 'Traffic Quality Parameter'
+ref table Theme
+ref table 'Retention Base'
+ref table 'Date Selection LTV'
+ref table LocalDateTable_5a637f4d-17e5-4acc-aa4e-3f4e185f0fe3
+ref table CB_Alert
+ref table 'Card Type Table'
+ref table LocalDateTable_f9eeef6a-b881-4ff0-9850-2249c44143f4
+ref table MID_Performance
+ref table 'Month Year List'
+ref table 'MID Filter'
+ref table 'CPA $ Parameter'
+ref table 'MID Performance Parameter'
+ref table 'Processing Fee % Parameter'
+ref table 'CB fees $ Parameter'
+ref table 'Alert $ Parameter'
+ref table order_chargebacks
+ref table 'Profitability Table'
+ref table 'Reserve $'
+ref table LocalDateTable_dd14fec3-5a28-4545-90ef-a96758e2bcaf
+ref table LocalDateTable_319ba1a4-6f85-46d3-a32e-5c2fd935dc79
+ref table LocalDateTable_ea2093be-f8d7-44df-a923-bba469798d59
+ref table BillingCycle
+ref table AffID
+ref table Sub_AffID
+ref table AttemptCount
+
+ref cultureInfo en-US
+

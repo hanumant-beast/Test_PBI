@@ -1,0 +1,65 @@
+table 'CB fees $ Parameter'
+	lineageTag: 21950e8e-a9b8-4c38-9dee-913afa140601
+
+	measure 'CB fees $ Parameter' = MAX('CB fees $ Parameter'[Value])
+		formatString: \$#,0.0;(\$#,0.0);\$#,0.0
+		lineageTag: 45dfe57e-bee1-4309-a8a1-b70b2eb7d01c
+
+	measure 'CB Fees Value' =
+			
+			MIN('CB fees $ Parameter'[Value])
+			// SELECTEDVALUE('CB fees $ Parameter'[Value], 45)
+		formatString: \$#,0.0;(\$#,0.0);\$#,0.0
+		lineageTag: 34f2634e-64cf-41fd-b7fe-bbb0012819b8
+
+	measure 'Initials Organic Approvals' = CALCULATE([Initials], order_details[Attempt_Count]=1)
+		lineageTag: 35db4061-249b-491a-841a-9a4107ddc9ad
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Initials Organic Attempts' = CALCULATE([# Attempts], order_details[Sales Type]="Initials"&& order_details[Attempt_Count]=1)
+		formatString: 0
+		lineageTag: 4c81d6e6-6cc3-4040-9dc9-2f665973fd80
+
+	measure 'Rebills Organic Approvals' = CALCULATE([Rebills], order_details[Attempt_Count]=1)
+		lineageTag: c78e0ce9-ca8f-4ecd-b043-4d9c19b594a5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Rebills Organic Attempts' = CALCULATE([# Attempts], order_details[Sales Type]="Rebills"&& order_details[Attempt_Count]=1)
+		formatString: 0
+		lineageTag: a48c3956-7343-478c-8ee5-b3fbe13708d6
+
+	measure 'Straight Sales Organic Approvals' = CALCULATE([Straight Sales], order_details[Attempt_Count]=1)
+		lineageTag: a4ae63f4-43ff-4ad1-ae23-697f513e5a64
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Straight Sales Organic Attempts' = CALCULATE([# Attempts], order_details[Sales Type]="Straight Sales"&& order_details[Attempt_Count]=1)
+		formatString: 0
+		lineageTag: 0aac7de1-948a-41be-a8c8-91d5a64e0068
+
+	column Value
+		dataType: double
+		lineageTag: a8d5fe13-d2e3-42f6-b852-191e2d31c6a4
+		summarizeBy: sum
+		sourceColumn: Value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition 'CB fees $ Parameter' = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database(server, Database),
+				    beast_insights_v2_generic_series = Source{[Schema="beast_insights_v2",Item="generic_series"]}[Data],
+				    #"Renamed Columns" = Table.RenameColumns(beast_insights_v2_generic_series,{{"number", "Value"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

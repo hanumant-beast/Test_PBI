@@ -1,0 +1,57 @@
+table CB_Alert
+	lineageTag: 4504decb-9e61-4b56-9e67-a047a0abc516
+
+	measure Number =
+			SWITCH(SELECTEDVALUE(CB_Alert[Order]),1,[# CB (by CB Date)],2,[# ETHOCA],3,[# RDR],4,[# CDRN],
+			[# CB (by CB Date)]+[# ETHOCA]+[# RDR]+[# CDRN]
+			)
+		formatString: #,0
+		lineageTag: 3aae9b5c-953e-4ea8-af5a-3a4e50bbbac4
+
+	measure Percentage =
+			
+			var a = IF([# CB (by CB Date)]>0,1,0)
+			var b = IF([# ETHOCA]>0,1,0)
+			var C = IF([# RDR]>0,1,0)
+			var d = IF([# CDRN]>0,1,0)
+			var e = a+b+c+d
+			RETURN
+			IF(
+			    HASONEVALUE(CB_Alert[Order]),
+			    SWITCH(
+			        SELECTEDVALUE(CB_Alert[Order]),1,[% CB by CB Date],2,[% Ethoca],3,[% RDR],4,[% CDRN],0),
+			        DIVIDE(( [# CB (by CB Date)] + [# ETHOCA] + [# RDR] + [# CDRN]),([# Approvals]*e))
+			        )
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 0e9ef99c-994e-4573-b76a-0cf8f8f0d99b
+
+	column Type
+		dataType: string
+		lineageTag: 6dab205d-dc14-4b96-8027-44f205a3cc9c
+		summarizeBy: none
+		sourceColumn: Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column Order
+		dataType: int64
+		formatString: 0
+		lineageTag: 2ccb0eaf-5dc7-4700-bfc3-2cc6484042f2
+		summarizeBy: sum
+		sourceColumn: Order
+
+		annotation SummarizationSetBy = Automatic
+
+	partition CB_Alert = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WcnZS0lEyVIrViVZyLcnIT04Eco3A3CCXICDbGMx2dgnyA3JMlGJjAQ==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Type = _t, Order = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Type", type text}, {"Order", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Exception
+

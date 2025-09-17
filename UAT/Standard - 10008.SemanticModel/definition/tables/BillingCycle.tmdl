@@ -1,0 +1,17 @@
+table BillingCycle
+	lineageTag: df7e6c7f-a963-4a62-b574-9b38159b2b56
+
+	column 'Billing Cycle'
+		lineageTag: 6dd8eeba-5ad6-4558-ab28-0f6a98fc10c0
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: order_details[Billing Cycle]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition BillingCycle = calculated
+		mode: import
+		source = FILTER(SUMMARIZECOLUMNS(order_details[Billing Cycle]),NOT ISBLANK(order_details[Billing Cycle]))
+
+	annotation PBI_Id = 4b61b9550ae74d609e176ca7ed144a13
+

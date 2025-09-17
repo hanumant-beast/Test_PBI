@@ -1,0 +1,66 @@
+table 'CB & Refund Parameter'
+	lineageTag: d3a74ba8-9511-41f2-83a2-879ac21ad1fc
+
+	column 'CB & Refund Parameter'
+		lineageTag: 4c665088-f192-4a1b-8945-c3444aeb129c
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'CB & Refund Parameter Order'
+
+		relatedColumnDetails
+			groupByColumn: 'CB & Refund Parameter Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'CB & Refund Parameter Fields'
+		isHidden
+		lineageTag: 41ae08a7-a074-44cf-b605-c0ff0fccf0f8
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'CB & Refund Parameter Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'CB & Refund Parameter Order'
+		isHidden
+		formatString: 0
+		lineageTag: 86690137-588c-4deb-88e2-2aeaf7a904b7
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'CB & Refund Parameter' = calculated
+		mode: import
+		source =
+				{
+				    ("Campaign", NAMEOF('campaigns'[Campaign]), 0),
+				    ("Campaign Type", NAMEOF('campaigns'[Campaign Type]), 1),
+				    ("Product", NAMEOF('products'[Product]), 2),
+				    ("Product Group", NAMEOF('products'[product_group]), 3),
+				    ("Gateway ID", NAMEOF('payments'[gateway_id]), 4),
+				    ("Acquirer", NAMEOF('payments'[lender]), 5),
+				    ("Corp", NAMEOF('payments'[corp]), 5.1),
+				    ("MCC", NAMEOF('payments'[mcc]), 5.2),
+				    ("Gateway Alias", NAMEOF('payments'[gateway_alias]), 6),
+				    ("Offer", NAMEOF('offers'[Offer]), 7),
+				    ("Date", NAMEOF('Calendar'[Date]), 8),
+				    ("Week Range", NAMEOF('Calendar'[Week Range]), 9),
+				    ("Month Year", NAMEOF('Calendar'[Month Year]), 10),
+				    ("BIN",NAMEOF(bin_lookup[BIN]),11),
+				    ("Card Brand",NAMEOF(bin_lookup[card]),12),
+				    ("Bank",NAMEOF(bin_lookup[Bank]),13),
+				    ("Billing Cycle",NAMEOF(BillingCycle[Billing Cycle]),14),
+				    ("Affiliate ID",NAMEOF(AffID[affid]),15),
+				    ("Sub-Affiliate ID",NAMEOF(Sub_AffID[sub_affid]),16),
+				    ("Price Point",NAMEOF(PricePoint[order_total]),17)
+				}
+
+	annotation PBI_Id = 673d59baf756457d8815ed4b48fccd7b
+

@@ -1,0 +1,54 @@
+table 'Date Selection LTV'
+	lineageTag: 5a467295-e0b0-44a4-a569-fafa8aa4c5a8
+
+	column Parameter
+		lineageTag: 47e8f7a4-c0f3-41f0-a679-45f392d34ba1
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Parameter Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Parameter Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parameter Fields'
+		isHidden
+		lineageTag: 283e3ebd-9999-427a-b281-544ed06d1c71
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Parameter Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parameter Order'
+		isHidden
+		formatString: 0
+		lineageTag: f48eab3b-25a3-42b7-bae3-bc9796997c01
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Field = IF('Date Selection LTV'[Parameter Order]=1,"Week","Month")
+		lineageTag: f2056085-23fc-42b2-97af-12793b29b819
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Date Selection LTV' = calculated
+		mode: import
+		source =
+				{
+				    ("First Order at", NAMEOF('Calendar'[Month Year]), 2),
+				    ("First Order at", NAMEOF('Calendar'[Week Range]), 1)
+				}
+
+	annotation PBI_Id = a967bbf842f74dc9b014c56a2d97474c
+

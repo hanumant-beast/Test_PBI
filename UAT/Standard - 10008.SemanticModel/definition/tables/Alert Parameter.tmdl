@@ -1,0 +1,53 @@
+table 'Alert Parameter'
+	lineageTag: 0cc53ffa-cc11-44ab-b977-1039623baa82
+
+	column 'Alert Parameter'
+		lineageTag: f33c34f0-88dc-4cbf-a64c-f0094c5ab53e
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Alert Parameter Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Alert Parameter Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Alert Parameter Fields'
+		isHidden
+		lineageTag: 55310a9a-7734-4e06-9c9c-d350f49467f9
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Alert Parameter Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Alert Parameter Order'
+		isHidden
+		formatString: 0
+		lineageTag: 9e144828-dffc-4570-aee7-5b15b6f4e5f6
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Alert Parameter' = calculated
+		mode: import
+		source =
+				{
+				    ("Acquirer", NAMEOF('order_alerts'[Aquirer]), 0),
+				    ("Campaigns", NAMEOF('order_alerts'[Campaigns]), 1),
+				    ("BIN", NAMEOF('order_alerts'[card_bin]), 2),
+				    ("Gateway", NAMEOF('order_alerts'[gateway name]), 3),
+				    ("Issuer", NAMEOF('order_alerts'[Issuer]), 4),
+				    ("Pricepoint", NAMEOF(order_alerts[transaction_amount]), 5),
+				    ("Alert Status", NAMEOF(order_alerts[Alerts Status]), 6)
+				}
+
+	annotation PBI_Id = 83326e5e51794be7a8aee0d2fdba9a34
+

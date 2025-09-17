@@ -1,0 +1,71 @@
+table master_clients
+	isHidden
+	lineageTag: 3231468c-ad5c-4b02-9eaf-cd3f2903b538
+
+	column client_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 0f6a44a1-dc78-4182-b061-2681ae54b44b
+		summarizeBy: none
+		sourceColumn: client_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column client_name
+		dataType: string
+		isHidden
+		lineageTag: 598e2457-251f-4d39-a4bd-adc1c0c443da
+		summarizeBy: none
+		sourceColumn: client_name
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column unique_key_variant
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 71fdd4f1-92f9-45e4-a02b-78a5b3389a6a
+		summarizeBy: sum
+		sourceColumn: unique_key_variant
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column email
+		dataType: string
+		lineageTag: 8b8204f6-b825-48d0-8278-84f7b75798e7
+		summarizeBy: none
+		sourceColumn: email
+
+		annotation SummarizationSetBy = Automatic
+
+	column email_list
+		dataType: string
+		lineageTag: 413fb085-b77f-4d4b-8b88-88ee84297604
+		summarizeBy: none
+		sourceColumn: email_list
+
+		annotation SummarizationSetBy = Automatic
+
+	partition master_clients = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database(server, Database),
+				    public_master_clients = Source{[Schema="public",Item="master_clients"]}[Data],
+				    #"Removed Columns" = Table.RemoveColumns(public_master_clients,{"created_on", "created_by", "last_modified_on", "last_modified_by"})
+				in
+				    #"Removed Columns"
+
+	changedProperty = IsHidden
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

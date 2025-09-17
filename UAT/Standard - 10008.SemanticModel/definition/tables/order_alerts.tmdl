@@ -1,0 +1,815 @@
+table order_alerts
+	lineageTag: 673349da-2aba-44fd-acd1-4e317604b3f3
+
+	measure '# ETHOCA' =
+			VAR a=CALCULATE(COUNT(order_alerts[id]),order_alerts[alert_type]="ETHOCA")
+			RETURN IF(a=BLANK(),0,a)
+		formatString: #,0
+		displayFolder: + Count
+		lineageTag: bdecbe14-a1de-426c-ab40-2e75c5a572f5
+
+	measure '# RDR' =
+			var a=CALCULATE(COUNT(order_alerts[id]),order_alerts[alert_type]="RDR")
+			RETURN IF(a=BLANK(),0,a)
+		formatString: #,0
+		displayFolder: + Count
+		lineageTag: c991cecc-cb8d-4c84-8cd5-26d100e78538
+
+	measure '$ ETHOCA' =
+			VAR a=CALCULATE(SUM(order_alerts[transaction_amount]),order_alerts[alert_type]="ETHOCA")
+			RETURN IF(a=BLANK(),0,a)
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: + Amount
+		lineageTag: 1c571d34-4678-4ede-bf8e-a9739b580216
+
+	measure '$ RDR' =
+			VAR a=CALCULATE(SUM(order_alerts[transaction_amount]),order_alerts[alert_type]="RDR")
+			RETURN IF(a=BLANK(),0,a)
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: + Amount
+		lineageTag: 700624c0-1ba8-434d-bb15-a328e5402f4d
+
+	measure '# Total' =
+			VAR a=CALCULATE(COUNT(order_alerts[id]),FILTER(order_alerts,NOT order_alerts[alert_type] in {"CHARGEBACK",BLANK()}))
+			RETURN IF(a=BLANK(),0,a)
+		formatString: #,0
+		displayFolder: + Count
+		lineageTag: 3d74a8a0-305a-451b-aefc-b0cdbca4e568
+
+	measure '$ Total' = CALCULATE(SUM(order_alerts[transaction_amount]),FILTER(order_alerts,NOT order_alerts[alert_type] in {"CHARGEBACK",BLANK()}))
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: + Amount
+		lineageTag: e44d7886-ad5a-40c6-8bf5-0f13031ae3be
+
+	measure '% RDR Effective1' =
+			
+			VAR a=DIVIDE( CALCULATE([# RDR],order_alerts[Alerts Status]="Effective RDR"),[# RDR])
+			RETURN IF(a=BLANK(),0,a)
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: + Percentage
+		lineageTag: d08b5f2c-ee94-45a1-9fc8-962e774122a7
+
+	measure '% ETHOCA Effective1' =
+			
+			VAR a=DIVIDE( CALCULATE([# ETHOCA],order_alerts[Alerts Status]="Effective Ethoca"),[# ETHOCA])
+			RETURN IF(a=BLANK(),0,a)
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: + Percentage
+		lineageTag: b30e7b04-4019-4e0c-9ec1-aabd24820035
+
+	measure 'CB count' = CALCULATE(COUNT(order_alerts[IS_CHARGEBACK]), order_alerts[IS_CHARGEBACK]="Yes")
+		lineageTag: 7561b4ce-cf09-4f20-bf6e-3125ba9e674b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Refund count' = CALCULATE(COUNT(order_alerts[IS_REFUND/VOID]), order_alerts[IS_REFUND/VOID]="YES")
+		lineageTag: 93759087-8b12-4928-8a29-fec079d91220
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '# Total_Visa' =
+			VAR a= CALCULATE(COUNT(order_alerts[id]),FILTER(order_alerts,NOT order_alerts[alert_type] in {"CHARGEBACK",BLANK()} &&
+			    order_alerts[Card_type_new]="Visa"
+			))
+			RETURN IF(a=BLANK(),0,a)
+		formatString: #,0
+		displayFolder: + Count
+		lineageTag: 772c7edd-fb0b-4da2-b775-5c2895ac24a5
+
+	measure '% RDR Effective1_Visa' =
+			VAR a=DIVIDE([# Total_Visa],[PNL_# Approvals_Visa])
+			RETURN IF(a=BLANK(),0,a)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: + Percentage
+		lineageTag: 5299e216-03a2-48a0-b894-73e2081c3453
+
+	measure '# Total_Master' =
+			VAR  a= CALCULATE(COUNT(order_alerts[id]),FILTER(order_alerts,NOT order_alerts[alert_type] in {"CHARGEBACK",BLANK()} &&
+			    order_alerts[Card_type_new]="Mastercard"
+			))
+			RETURN IF(a=BLANK(),0,a)
+		formatString: #,0
+		displayFolder: + Count
+		lineageTag: 88e3a51e-a5c7-4cbf-b4de-7e31b11215b7
+
+	measure '% RDR Effective1_Master' =
+			VAR a=DIVIDE([# Total_Master],[PNL_# Approvals_PP_Master])
+			RETURN IF(a=BLANK(),0,a)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: + Percentage
+		lineageTag: 9aae885a-2b36-47de-a2d0-6e139d3e141c
+
+	measure '% Ethoca' =
+			VAR a=DIVIDE([# ETHOCA],[# Approvals])
+			RETURN IF(a=BLANK(),0,a)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: + Percentage
+		lineageTag: 21d6f375-4111-484c-9a10-af25f44d2eb0
+
+	measure '% RDR' =
+			VAR a=DIVIDE([# RDR],[# Approvals])
+			RETURN IF(a=BLANK(),0,a)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: + Percentage
+		lineageTag: 6d88a4cf-f949-4e1f-8115-a89413b3e98b
+
+	measure '# CDRN' =
+			VAR a=CALCULATE(COUNT(order_alerts[id]),order_alerts[alert_type]="CDRN")
+			RETURN IF(a=BLANK(),0,a)
+		formatString: #,0
+		displayFolder: + Count
+		lineageTag: 47126db3-34a1-4f9c-a27f-2149cf7cf62b
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure '% CDRN' =
+			VAR a=DIVIDE([# CDRN],[# Approvals])
+			RETURN IF(a=BLANK(),0,a)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: + Percentage
+		lineageTag: 3210c2dc-f212-4f95-ae3a-f598d429d247
+
+	measure '## Alert' =
+			SWITCH(
+			    SELECTEDVALUE('CB/Refund Date'[Parameter]),
+			    "CB/Refund Date",[# Total],
+			    "Initial Date",[# Total by trial_date],
+			    [# Total by order_date])
+		formatString: #,0
+		displayFolder: + Toggle
+		lineageTag: 5fc1409f-26b2-45e2-b709-888113f1c130
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure '# Total by order_date' = CALCULATE([# Total],USERELATIONSHIP(order_alerts[transaction_date],'Calendar'[Date]))
+		formatString: #,0
+		displayFolder: + Count
+		lineageTag: 3fc7f049-c63e-4c7f-9e6b-8c61e782ad4e
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure '# Total by trial_date' = CALCULATE([# Total],USERELATIONSHIP(order_alerts[Trial Date],'Calendar'[Date]))
+		formatString: #,0
+		displayFolder: + Count
+		lineageTag: 582d1d78-d2ac-44e0-bb8a-81eb21b0582d
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure '# RDR by trial_date' = CALCULATE([# RDR],USERELATIONSHIP(order_alerts[Trial Date],'Calendar'[Date]))
+		formatString: #,0
+		displayFolder: + Count
+		lineageTag: 1a704c0f-15f6-4a80-b9ba-fca41f4f8366
+
+	measure '# Ethoca by trial_date' = CALCULATE([# ETHOCA],USERELATIONSHIP(order_alerts[Trial Date],'Calendar'[Date]))
+		formatString: #,0
+		displayFolder: + Count
+		lineageTag: 5be6adce-8e85-4935-b551-2b9f304fd416
+
+	measure '# RDR by order_date' = CALCULATE([# RDR],USERELATIONSHIP(order_alerts[transaction_date],'Calendar'[Date]))
+		formatString: #,0
+		displayFolder: + Count
+		lineageTag: 02d2b474-1c4a-43cf-9624-c4935a054628
+
+	measure '# Ethoca by order_date' = CALCULATE([# ETHOCA],USERELATIONSHIP(order_alerts[transaction_date],'Calendar'[Date]))
+		formatString: #,0
+		displayFolder: + Count
+		lineageTag: c0420800-0e0c-4851-af90-9f17bc62c838
+
+	measure '## RDR' =
+			SWITCH(
+			    SELECTEDVALUE('CB/Refund Date'[Parameter]),
+			    "CB/Refund Date",[# RDR],
+			    "Initial Date",[# RDR by trial_date],
+			    [# RDR by order_date])
+		formatString: #,0
+		displayFolder: + Toggle
+		lineageTag: 4de595d8-51c1-4464-9505-6df0f5ae06c4
+
+	measure '## Ethoca' =
+			SWITCH(
+			    SELECTEDVALUE('CB/Refund Date'[Parameter]),
+			    "CB/Refund Date",[# ETHOCA],
+			    "Initial Date",[# Ethoca by trial_date],
+			    [# Ethoca by order_date])
+		formatString: #,0
+		displayFolder: + Toggle
+		lineageTag: 7d15ffbe-4429-4ae6-bcf6-afcacc7b4a5e
+
+	measure '$ Total by order_date' = CALCULATE([$ Total],USERELATIONSHIP(order_alerts[transaction_date],'Calendar'[Date]))
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: + Amount
+		lineageTag: 2c016827-12a2-4522-a622-71ff58041d57
+
+	measure '$ Total by trial_date' = CALCULATE([$ Total],USERELATIONSHIP(order_alerts[Trial Date],'Calendar'[Date]))
+		displayFolder: + Amount
+		lineageTag: 0ae81886-d573-4ed7-ae02-4ecf630fbc7c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '$ RDR by trial_date' = CALCULATE([$ RDR],USERELATIONSHIP(order_alerts[Trial Date],'Calendar'[Date]))
+		displayFolder: + Amount
+		lineageTag: b8560dbb-dbac-4d18-98da-e94080b3c056
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '$ Ethoca by trial_date' = CALCULATE([$ ETHOCA],USERELATIONSHIP(order_alerts[Trial Date],'Calendar'[Date]))
+		displayFolder: + Amount
+		lineageTag: 39dacf53-b134-4916-8ca7-a79dc963dc3c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '$ RDR by order_date' = CALCULATE([$ RDR],USERELATIONSHIP(order_alerts[transaction_date],'Calendar'[Date]))
+		displayFolder: + Amount
+		lineageTag: dfd0bec1-d3a0-4957-8912-87832afd5290
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '$ Ethoca by order_date' = CALCULATE([$ ETHOCA],USERELATIONSHIP(order_alerts[transaction_date],'Calendar'[Date]))
+		displayFolder: + Amount
+		lineageTag: 2dffb23b-46dd-4336-9942-30b6028ef7c0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '$$ Alert' =
+			SWITCH(
+			    SELECTEDVALUE('CB/Refund Date'[Parameter]),
+			    "CB/Refund Date",[$ Total],
+			    "Initial Date",[$ Total by trial_date],
+			    [$ Total by order_date])
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: + Toggle
+		lineageTag: 11028994-909c-4b64-b378-0fed37950acf
+
+	measure '$$ Ethoca' =
+			SWITCH(
+			    SELECTEDVALUE('CB/Refund Date'[Parameter]),
+			    "CB/Refund Date",[$ ETHOCA],
+			    "Initial Date",[$ Ethoca by trial_date],
+			    [$ Ethoca by order_date])
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: + Toggle
+		lineageTag: 87c3c7dd-d6f0-443f-a76e-8d8309ff026e
+
+	measure '$$ RDR' =
+			SWITCH(
+			    SELECTEDVALUE('CB/Refund Date'[Parameter]),
+			    "CB/Refund Date",[$ RDR],
+			    "Initial Date",[$ RDR by trial_date],
+			    [$ RDR by order_date])
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: + Toggle
+		lineageTag: 8f2073ee-1175-4e49-95e0-6a73905d50e6
+
+	column id
+		dataType: int64
+		formatString: 0
+		lineageTag: 0688563e-b9ee-401d-9206-c26aaa5edde2
+		summarizeBy: sum
+		sourceColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	column alert_id
+		dataType: string
+		lineageTag: 9b534fde-2b9c-4df1-a47c-2f930fb05865
+		summarizeBy: none
+		sourceColumn: alert_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column order_id
+		dataType: string
+		lineageTag: 4a7a7c0d-d235-496f-9701-2467a64765e5
+		summarizeBy: none
+		sourceColumn: order_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column status
+		dataType: string
+		lineageTag: 9edaf40a-314a-40f3-88da-8d2068b296cd
+		summarizeBy: none
+		sourceColumn: status
+
+		annotation SummarizationSetBy = Automatic
+
+	column gateway_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 3304e518-1842-468b-a494-c1ea743fbf57
+		summarizeBy: sum
+		sourceColumn: gateway_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column gateway_name
+		dataType: string
+		lineageTag: 47d5d3b9-74ff-41e4-af50-b5ef3a409bfb
+		summarizeBy: none
+		sourceColumn: gateway_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column alert_date
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 80ed2b71-29ff-4426-a2e6-5a7111e774f1
+		summarizeBy: none
+		sourceColumn: alert_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column transaction_amount
+		dataType: double
+		lineageTag: 13187c48-d636-42dc-b728-75570775f194
+		summarizeBy: sum
+		sourceColumn: transaction_amount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column transaction_date
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: bc26b6d5-8c9d-4e8a-b4d7-eef47bc41868
+		summarizeBy: none
+		sourceColumn: transaction_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column currency
+		dataType: string
+		lineageTag: 7897014a-6fac-48bb-9b9e-11938a47f522
+		summarizeBy: none
+		sourceColumn: currency
+
+		annotation SummarizationSetBy = Automatic
+
+	column client_id
+		dataType: int64
+		formatString: 0
+		lineageTag: e7c10840-2253-4d3b-9696-99a6aa0198cc
+		summarizeBy: sum
+		sourceColumn: client_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column client_name
+		dataType: string
+		lineageTag: 95af4623-49aa-48e1-9c9f-26cda6ff6b88
+		summarizeBy: none
+		sourceColumn: client_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column crm
+		dataType: string
+		lineageTag: 9bf25318-777c-4cf3-ad3f-aca7eda568f0
+		summarizeBy: none
+		sourceColumn: crm
+
+		annotation SummarizationSetBy = Automatic
+
+	column platform
+		dataType: string
+		lineageTag: fc52fa5f-eb05-430f-963c-02b25092a9b8
+		summarizeBy: none
+		sourceColumn: platform
+
+		annotation SummarizationSetBy = Automatic
+
+	column alert_type
+		dataType: string
+		lineageTag: 37a93eb5-d977-42a3-a3de-45cab9a710dd
+		summarizeBy: none
+		sourceColumn: alert_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column card_type
+		dataType: string
+		lineageTag: 85e033ce-a607-48f1-8d12-e2a9df484ebd
+		summarizeBy: none
+		sourceColumn: card_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column card_bin
+		dataType: int64
+		formatString: 0
+		lineageTag: 7864ad91-d46e-464a-832d-a9894f7e9f71
+		summarizeBy: none
+		sourceColumn: card_bin
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'CRM Order ID' = LOOKUPVALUE(order_details[order_id],order_details[order_id],order_alerts[order_id])
+		lineageTag: be1430e5-60a8-4bec-b0ec-8bb15229f6ca
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Alerts Status' = ```
+			
+			                IF(order_alerts[alert_type]="RDR", if(order_alerts[CRM Order ID]=BLANK(),"RDR with Invalid Orders",
+			                    IF(order_alerts[IS_REFUND/VOID]="YES","RDR with CRM Refund",
+			                        IF(order_alerts[IS_CHARGEBACK]="Yes","RDR turned into CB",
+			                           IF(order_alerts[alert_type]="RDR","Effective RDR")))),
+			                        
+			                      IF(order_alerts[alert_type]="ETHOCA", if(order_alerts[CRM Order ID]=BLANK(),"Ethoca with Invalid Orders",
+			                            IF(order_alerts[IS_REFUND/VOID]<>"YES","Ethoca not refunded in CRM",
+			                                IF(order_alerts[IS_CHARGEBACK]="Yes","Ethoca turned into CB",
+			                                    IF( order_alerts[IS_REFUND/VOID]="YES","Effective Ethoca"
+			                                    )
+			                                )
+			                            )
+			                           )
+			                        )
+			                    )
+			                
+			```
+		lineageTag: 4bd50f63-f039-42ac-8bea-9952e83285ee
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column IS_REFUND/VOID =
+			
+			CALCULATE(FIRSTNONBLANK(order_details[IS_Refund/Void],order_details[IS_Refund/Void]), FILTER(order_details,order_details[order_id]=EARLIER(order_alerts[order_id]) && order_details[order_status]<>"Declined"))
+			
+			// LOOKUPVALUE(order_details[IS_Refund/Void],order_details[order_id],order_alerts[order_id])
+		lineageTag: df46fbda-d8a9-4e9d-b36c-a672eb3f68c0
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column IS_CHARGEBACK =
+			
+			CALCULATE(FIRSTNONBLANK(order_details[is_chargeback_final],order_details[is_chargeback_final]), FILTER(order_details,order_details[order_id]=EARLIER(order_alerts[order_id]) && order_details[order_status]<>"Declined"))
+			
+			// LOOKUPVALUE(order_details[is_chargeback],order_details[order_id],order_alerts[order_id])
+		lineageTag: c0b46e0b-3772-4597-9f08-823e68fe921c
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Aquirer = LOOKUPVALUE(payments[lender],payments[gateway_id],order_alerts[GatewayID])
+		lineageTag: e4fc5d01-5cf9-49a5-b2db-265a686e08cc
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Issuer = LOOKUPVALUE(bin_lookup[Bank],bin_lookup[BIN],order_alerts[card_bin])
+		lineageTag: 970e483f-83d2-4492-9fe3-3b069db85aea
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Campaign_id =
+			
+			CALCULATE(FIRSTNONBLANK(order_details[campaign_id],order_details[campaign_id]), FILTER(order_details,order_details[order_id]=EARLIER(order_alerts[order_id]) && order_details[order_status]<>"Declined"))
+			
+			// LOOKUPVALUE(order_details[campaign_id],order_details[order_id],order_alerts[order_id])
+		formatString: 0
+		lineageTag: d77213dc-819c-4002-bb12-de7bbe9efaf6
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Campaigns = LOOKUPVALUE(campaigns[campaign], campaigns[campaign_id],order_alerts[Campaign_id])
+		lineageTag: e419994b-fece-466d-b935-a2cbfdd32ba3
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Order Status' =
+			
+			CALCULATE(FIRSTNONBLANK(order_details[order_status],order_details[order_status]), FILTER(order_details,order_details[order_id]=EARLIER(order_alerts[order_id]) && order_details[order_status]<>"Declined"))
+			
+			// LOOKUPVALUE(order_details[order_status],order_details[order_id],order_alerts[order_id])
+		lineageTag: 7cd2ff83-99a2-4df9-89b6-9e3af23be224
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column GatewayID =
+			
+			Var a = CALCULATE(FIRSTNONBLANK(order_details[gateway_id],order_details[gateway_id]), FILTER(order_details,order_details[order_id]=EARLIER(order_alerts[order_id]) && order_details[order_status]<>"Declined"))
+			RETURN IF(a=BLANK(),order_alerts[gateway_id],a)
+			// IF(order_alerts[gateway_id]<>BLANK(),order_alerts[gateway_id],LOOKUPVALUE(order_details[gateway_id],order_details[order_id],order_alerts[order_id]))
+		formatString: 0
+		lineageTag: a3c88bff-2b10-49b1-afdc-a29ac2891c83
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Gateway Name' = LOOKUPVALUE(payments[gateway_alias],payments[gateway_id],order_alerts[GatewayID])
+		lineageTag: a02c4555-37f1-4276-9c2f-4f11ba5add6d
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column reason_code
+		dataType: string
+		lineageTag: ae03893d-9eee-4c04-b811-9e69ca10ad0e
+		summarizeBy: none
+		sourceColumn: reason_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column reason_code_desc
+		dataType: string
+		lineageTag: 7871c3ec-25dd-4ab2-a64a-751c16556841
+		summarizeBy: none
+		sourceColumn: reason_code_desc
+
+		annotation SummarizationSetBy = Automatic
+
+	column Card_Type_key = SWITCH(order_alerts[Card_type_new],"VISA","Visa","MASTERCARD","Mastercard","DISCOVER","Discover","Other")
+		lineageTag: 63aa8f2c-c9cb-4c2a-94eb-5ded25f2dec4
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column auth_id
+		dataType: string
+		lineageTag: 0fba4643-0e9c-483b-8b50-4bca75bdf069
+		summarizeBy: none
+		sourceColumn: auth_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column case_type
+		dataType: string
+		lineageTag: e5295ede-82d7-439b-a50e-db757659c9ac
+		summarizeBy: none
+		sourceColumn: case_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column case_source
+		dataType: string
+		lineageTag: 5f4908bd-0bb6-4504-ae60-f325be73dd7d
+		summarizeBy: none
+		sourceColumn: case_source
+
+		annotation SummarizationSetBy = Automatic
+
+	column partner_name
+		dataType: string
+		lineageTag: aac1e899-c1be-4c84-b863-86b84d1703da
+		summarizeBy: none
+		sourceColumn: partner_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column partner_id
+		dataType: string
+		lineageTag: b94e09a0-2f69-413e-8ea2-ee9d349e34cf
+		summarizeBy: none
+		sourceColumn: partner_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column mcc
+		dataType: int64
+		formatString: 0
+		lineageTag: c06e7abe-c605-4fb5-8429-fd341bf290da
+		summarizeBy: sum
+		sourceColumn: mcc
+
+		annotation SummarizationSetBy = Automatic
+
+	column acquirer_bin
+		dataType: string
+		lineageTag: a5877ed6-1dfc-4476-ad93-9496c2e51b4d
+		summarizeBy: none
+		sourceColumn: acquirer_bin
+
+		annotation SummarizationSetBy = Automatic
+
+	column caid
+		dataType: string
+		lineageTag: d25db999-05c0-4b93-8d4e-235d517a0507
+		summarizeBy: none
+		sourceColumn: caid
+
+		annotation SummarizationSetBy = Automatic
+
+	column descriptior_name
+		dataType: string
+		lineageTag: 017d0ec5-c6a9-40f3-b21d-8a089acafded
+		summarizeBy: none
+		sourceColumn: descriptior_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column descriptior_contact
+		dataType: string
+		lineageTag: bc735ce9-abf9-4c81-bdf2-ea5adc4ed83a
+		summarizeBy: none
+		sourceColumn: descriptior_contact
+
+		annotation SummarizationSetBy = Automatic
+
+	column transaction_currency
+		dataType: string
+		lineageTag: 6da4b6f3-a53b-4ea2-afe7-e0d1bd31d201
+		summarizeBy: none
+		sourceColumn: transaction_currency
+
+		annotation SummarizationSetBy = Automatic
+
+	column arn
+		dataType: string
+		lineageTag: 5bca8723-91a2-4c06-a0e7-50454a0d1750
+		summarizeBy: none
+		sourceColumn: arn
+
+		annotation SummarizationSetBy = Automatic
+
+	column card_last_four
+		dataType: string
+		lineageTag: e94217f7-8a0b-4aa8-847d-40bae74e7811
+		summarizeBy: none
+		sourceColumn: card_last_four
+
+		annotation SummarizationSetBy = Automatic
+
+	column case_amount
+		dataType: double
+		lineageTag: be6bff95-dd33-42d0-9b7c-a10e66e55fe5
+		summarizeBy: sum
+		sourceColumn: case_amount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column status_code
+		dataType: string
+		lineageTag: 19f48c14-3d37-4bce-a238-c767988a74af
+		summarizeBy: none
+		sourceColumn: status_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column rule_type
+		dataType: string
+		lineageTag: 04108921-9a97-4041-9948-f17e998ad932
+		summarizeBy: none
+		sourceColumn: rule_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column rule_name
+		dataType: string
+		lineageTag: 9acb452f-69b1-43b4-9e7e-41c3c497cae3
+		summarizeBy: none
+		sourceColumn: rule_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column pricing_tier
+		dataType: string
+		lineageTag: 141ad087-40ac-4b99-bfaa-869e6c5899b3
+		summarizeBy: none
+		sourceColumn: pricing_tier
+
+		annotation SummarizationSetBy = Automatic
+
+	column installment_number
+		dataType: string
+		lineageTag: b2401f97-0bb4-4951-b968-7891438369ac
+		summarizeBy: none
+		sourceColumn: installment_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column visa_transaction_id
+		dataType: string
+		lineageTag: 1e40caff-97b6-4c44-b5fd-305acaa1a307
+		summarizeBy: none
+		sourceColumn: visa_transaction_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column decision_source
+		dataType: string
+		lineageTag: e91dc0d1-5916-4898-a0cd-18217fca8053
+		summarizeBy: none
+		sourceColumn: decision_source
+
+		annotation SummarizationSetBy = Automatic
+
+	column Card = LOOKUPVALUE(bin_lookup[card],bin_lookup[BIN],order_alerts[card_bin])
+		lineageTag: 45a3e3a5-ec3f-4ce2-8752-30f3ef22d503
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Card_type_new = IF(order_alerts[card_type]<>BLANK(),order_alerts[card_type],order_alerts[Card])
+		lineageTag: 04f2a5dd-202f-4ec6-bd47-5d9528ecef17
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column order_status =
+			
+			VAR a = CALCULATE(max(order_details[DateTimeKey]),FILTER(order_details,order_details[order_id]=EARLIER(order_alerts[order_id]) && order_details[order_status]="Approved"))
+			RETURN CALCULATE(MAX(order_details[order_status]),FILTER(order_details,order_details[DateTimeKey]=a && order_details[order_id]=EARLIER(order_alerts[order_id])))
+		lineageTag: 6211ca2c-6664-4e2c-88e1-78647c423202
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Product_ID =
+			VAR a = CALCULATE(max(order_details[DateTimeKey]),FILTER(order_details,order_details[order_id]=EARLIER(order_alerts[order_id])))
+			RETURN CALCULATE(MAX(order_details[product_id]),FILTER(order_details,order_details[DateTimeKey]=a && order_details[order_id]=EARLIER(order_alerts[order_id])))
+		formatString: 0
+		lineageTag: f6a6731d-3e36-4f2a-ae0e-26c4f816ff29
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Billing Cycle' =
+			VAR a = CALCULATE(max(order_details[DateTimeKey]),FILTER(order_details,order_details[order_id]=EARLIER(order_alerts[order_id])))
+			RETURN CALCULATE(MAX(order_details[Billing Cycle]),FILTER(order_details,order_details[DateTimeKey]=a && order_details[order_id]=EARLIER(order_alerts[order_id])))
+		lineageTag: 120bda97-eed6-4c74-af6f-06a3d9493c45
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Price Point' =
+			VAR a = CALCULATE(max(order_details[DateTimeKey]),FILTER(order_details,order_details[order_id]=EARLIER(order_alerts[order_id])))
+			RETURN CALCULATE(MAX(order_details[order_total]),FILTER(order_details,order_details[DateTimeKey]=a && order_details[order_id]=EARLIER(order_alerts[order_id])))
+		lineageTag: ddb036ee-832d-4e85-b3d2-28ce8211a890
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column affid =
+			VAR a = CALCULATE(max(order_details[DateTimeKey]),FILTER(order_details,order_details[order_id]=EARLIER(order_alerts[order_id])))
+			RETURN CALCULATE(MAX(order_details[affid]),FILTER(order_details,order_details[DateTimeKey]=a && order_details[order_id]=EARLIER(order_alerts[order_id])))
+		lineageTag: 7fc4764a-da00-4f02-b3fb-bd9787d0cc46
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column sub_affid =
+			VAR a = CALCULATE(max(order_details[DateTimeKey]),FILTER(order_details,order_details[order_id]=EARLIER(order_alerts[order_id])))
+			RETURN CALCULATE(MAX(order_details[sub_affid]),FILTER(order_details,order_details[DateTimeKey]=a && order_details[order_id]=EARLIER(order_alerts[order_id])))
+		lineageTag: a1eee5bb-abb4-44f9-9757-6a806bf6a281
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Attempt Count' =
+			VAR a = CALCULATE(max(order_details[DateTimeKey]),FILTER(order_details,order_details[order_id]=EARLIER(order_alerts[order_id])))
+			RETURN CALCULATE(MAX(order_details[Attempt Count]),FILTER(order_details,order_details[DateTimeKey]=a && order_details[order_id]=EARLIER(order_alerts[order_id])))
+		lineageTag: 80503d4b-caa7-4be5-922c-af433192ed3b
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Trial Date' =
+			VAR a = CALCULATE(max(order_details[DateTimeKey]),FILTER(order_details,order_details[order_id]=EARLIER(order_alerts[order_id])))
+			RETURN CALCULATE(MAX(order_details[Trial Date]),FILTER(order_details,order_details[DateTimeKey]=a && order_details[order_id]=EARLIER(order_alerts[order_id])))
+		formatString: Long Date
+		lineageTag: f0ca7db1-462a-4d8d-ae75-b9cf2f73ad18
+		summarizeBy: none
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition order_alerts = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database(server, Database),
+				    public_order_alerts = Source{[Schema="public",Item="order_alerts"]}[Data],
+				    #"Filtered Rows" = Table.SelectRows(public_order_alerts, each [client_id] = client_id),
+				    #"Added Index" = Table.AddIndexColumn(#"Filtered Rows", "Index", 1, 1, Int64.Type),
+				    #"Index Column data type (INT to TEXT)" = Table.TransformColumnTypes(#"Added Index",{{"Index", type text}}),
+				    #"Added Conditional Column" = Table.AddColumn(#"Index Column data type (INT to TEXT)", "Custom", each if [order_id] = null then [Index] else [order_id]),
+				    #"Removed Columns" = Table.RemoveColumns(#"Added Conditional Column",{"Index", "Custom"}),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Removed Columns",{{"order_id", type text}})
+				in
+				    #"Changed Type1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

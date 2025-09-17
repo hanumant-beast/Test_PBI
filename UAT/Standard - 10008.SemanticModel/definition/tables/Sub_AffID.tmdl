@@ -1,0 +1,17 @@
+table Sub_AffID
+	lineageTag: 36e1a8d7-17fa-4422-af60-e4c248282fc3
+
+	column sub_affid
+		lineageTag: 3d1b1ec9-b784-4dfc-881c-fc4f42d9a5ae
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: order_details[sub_affid]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Sub_AffID = calculated
+		mode: import
+		source = FILTER(SUMMARIZECOLUMNS(order_details[sub_affid]),NOT ISBLANK(order_details[sub_affid]))
+
+	annotation PBI_Id = 496c3438b209493499ae7414e3b47d64
+

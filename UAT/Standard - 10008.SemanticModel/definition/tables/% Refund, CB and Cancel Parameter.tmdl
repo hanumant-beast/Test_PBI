@@ -1,0 +1,72 @@
+table '% Refund, CB and Cancel Parameter'
+	lineageTag: afdb7afb-7137-4f28-a7c3-dad89f0ff487
+
+	column '% Refund, CB and Cancel Parameter'
+		lineageTag: 34ebd310-523d-4047-acdf-77aad7b734e5
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: '% Refund, CB and Cancel Parameter Order'
+
+		relatedColumnDetails
+			groupByColumn: '% Refund, CB and Cancel Parameter Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column '% Refund, CB and Cancel Parameter Fields'
+		isHidden
+		lineageTag: 4a6eabb0-e157-47af-a27a-0bf2a19a79a8
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: '% Refund, CB and Cancel Parameter Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column '% Refund, CB and Cancel Parameter Order'
+		isHidden
+		formatString: 0
+		lineageTag: 8adf42cd-07eb-45d1-a6c9-edafa5741898
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition '% Refund, CB and Cancel Parameter' = calculated
+		mode: import
+		source =
+				{
+				    ("# Attempts", NAMEOF('order_details'[# Attempts]), 0),
+				    ("# Approvals", NAMEOF('order_details'[Approvals + 0]), 1),
+				    ("Approval Rate", NAMEOF('order_details'[Approval Rate]), 2),
+				    ("% Cancels", NAMEOF('order_details'[% Cancels]), 3),
+				    ("% Refund", NAMEOF('order_details'[%% Refund (by Refund Date)]), 4),
+				    ("# Refund Alert", NAMEOF('order_details'[## Refund by (Refund Date)_alert]), 5),
+				    ("% Refund Alert", NAMEOF('order_details'[%% Refund (by Refund Date)_Alert]), 6),
+				    ("# Refund CS", NAMEOF('order_details'[## Refund by (Refund Date)_CS]), 7),
+				    ("% Refund CS", NAMEOF('order_details'[%% Refund (by Refund Date)_CS]), 8),
+				    ("# CB", NAMEOF('order_details'[# CB (by CB Date)]), 9),
+				    ("% CB", NAMEOF('order_details'[% CB by CB Date]), 10),
+				    ("# CB Visa", NAMEOF('order_details'[# CB (by CB Date)_Visa]), 11),
+				    ("% CB Visa", NAMEOF('order_details'[% CB (by CB Date)_Visa]), 12),
+				    ("$ Alerts Visa", NAMEOF([# Total_Visa]), 13),
+				    ("% Alerts Visa", NAMEOF([% RDR Effective1_Visa]), 14),
+				    ("# Transactions Visa", NAMEOF([# Approvals_Visa]), 15),
+				    ("# Transactions Master", NAMEOF([# Approvals_Master]), 16),
+				    ("% Decline Visa", NAMEOF([% Decline_Visa]), 17),
+				    ("% Decline Master", NAMEOF([% Decline_Master]), 18),
+				    ("# Alert", NAMEOF([# Total]), 19),
+				    ("# CB Master", NAMEOF('order_details'[# CB (by CB Date)_Master]), 20),
+				    ("% CB Master", NAMEOF('order_details'[% CB (by CB Date)_Master]), 21),
+				    ("$ Alerts Master", NAMEOF([# Total_Master]), 22),
+				    ("% Alerts Master", NAMEOF([% RDR Effective1_Master]), 23),
+				    ("$ Gross Revenue", NAMEOF('order_details'[$ Revenue]), 24),
+				    ("$ Net Revenue", NAMEOF('order_details'[Net Revenue]), 25)
+				}
+
+	annotation PBI_Id = 26e2c7471ae44b8883feac35619671c3
+

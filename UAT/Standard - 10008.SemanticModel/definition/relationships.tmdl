@@ -1,0 +1,253 @@
+relationship 88e97fae-3dd6-4eff-afd0-1314c41292e2
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Calendar.Week_Start_Date
+	toColumn: LocalDateTable_f03d4fb8-037b-4eb4-955e-314f261bddc2.Date
+
+relationship 846a7893-78f7-4113-b21d-34591ec8388f
+	joinOnDateBehavior: datePartOnly
+	fromColumn: payments.gateway_created
+	toColumn: LocalDateTable_fdd209bf-2710-454b-97e0-863739e82f57.Date
+
+relationship 0408be89-2fc3-4bf5-9fe8-de2aa5a88f94
+	joinOnDateBehavior: datePartOnly
+	fromColumn: order_details.hold_date
+	toColumn: LocalDateTable_f0a646c1-5e81-491f-a795-ac5408bb1f65.Date
+
+relationship c7b86d2f-ad1c-481d-86d0-52b138287912
+	joinOnDateBehavior: datePartOnly
+	fromColumn: order_details.refund_date
+	toColumn: LocalDateTable_fdaefb1e-e8b5-479d-b53c-69f8067b302d.Date
+
+relationship d41f389c-7fdf-44a1-accd-fe4dd2b1d7e0
+	fromColumn: order_details.gateway_id
+	toColumn: payments.gateway_id
+
+relationship 975fb163-d230-488b-9eea-75a804ba2cbb
+	fromColumn: order_details.BIN
+	toColumn: bin_lookup.BIN
+
+relationship 151a3c6b-0f9a-4620-9de9-6524ef0a954e
+	fromColumn: order_details.product_id
+	toColumn: products.product_id
+
+relationship 94563623-ac77-45b3-a328-94a0ea4cc559
+	fromColumn: order_details.campaign_id
+	toColumn: campaigns.campaign_id
+
+relationship ec9f2925-cb34-4b2d-a230-6f83b3880356
+	joinOnDateBehavior: datePartOnly
+	fromColumn: order_details.void_date
+	toColumn: LocalDateTable_4b5ccced-58bb-4b89-adb7-c31bc9c39b76.Date
+
+relationship 37695439-02d3-4ef2-8525-f24eb956e383
+	joinOnDateBehavior: datePartOnly
+	fromColumn: order_details.'Cancel Date'
+	toColumn: LocalDateTable_657970bc-179f-4610-93b9-f067bca528c9.Date
+
+relationship 56c22685-9cb1-43f3-aa96-b15923d0e47c
+	fromColumn: offers.campaign_id
+	toColumn: campaigns.campaign_id
+
+relationship d5433a5d-3f9a-4cce-9953-e78dcf27e86f
+	crossFilteringBehavior: bothDirections
+	fromColumn: offers.product_id
+	toColumn: products.product_id
+
+relationship 3da22af9-a8d1-4a43-a5de-2424e8b4209e
+	fromColumn: order_details.date_of_sale
+	toColumn: Calendar.Date
+
+relationship f3a86830-4cd3-4ac7-b3cc-2e3fefada4ec
+	isActive: false
+	fromColumn: order_details.'Refund/Void Date'
+	toColumn: Calendar.Date
+
+relationship 86bf2f9c-961c-4593-8082-19826356c2ac
+	isActive: false
+	fromColumn: order_details.'Trial Date'
+	toColumn: Calendar.Date
+
+relationship fc04d0dc-e5b1-477d-bf74-2d75ca6353ae
+	fromColumn: order_details.client_id
+	toColumn: master_clients.client_id
+
+relationship 0a45983a-c88c-4fb1-8a31-160dcb557406
+	isActive: false
+	fromColumn: order_details.'Trial Product ID'
+	toColumn: products.product_id
+
+relationship 966db4bf-e341-a21e-0d70-835d388adb42
+	isActive: false
+	fromColumn: order_details.'Trial Campaign ID'
+	toColumn: campaigns.campaign_id
+
+relationship 576a07bb-ad6c-90c2-091e-0b4a22315c2e
+	fromColumn: order_alerts.alert_date
+	toColumn: Calendar.Date
+
+relationship AutoDetected_edad3f73-9866-454a-9e4d-02a162d5a253
+	fromColumn: subscription_control.client_id
+	toColumn: master_clients.client_id
+
+relationship 7df076c3-148b-1b51-4ae4-43d4eb94176a
+	fromColumn: subscription_control.current_gw
+	toColumn: payments.gateway_id
+
+relationship 773f2b91-5f7d-2f02-7738-9a26e1d385d7
+	fromColumn: order_details.order_total
+	toColumn: PricePoint.order_total
+
+relationship 3147a526-e64c-44d3-82ca-e15a75a30ea1
+	joinOnDateBehavior: datePartOnly
+	fromColumn: subscription_control.attempted_at
+	toColumn: LocalDateTable_0d198ef9-cc15-4385-a582-2f6ff4729a04.Date
+
+relationship 3c489922-5312-47ab-81b0-2769a2428a2e
+	joinOnDateBehavior: datePartOnly
+	fromColumn: subscription_control.process_at
+	toColumn: LocalDateTable_c09cf899-8442-4b30-bdec-0a4b2e9bbdc3.Date
+
+relationship b700a799-118f-4b39-b745-38a67d0d20e8
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Calendar.Date
+	toColumn: LocalDateTable_5a637f4d-17e5-4acc-aa4e-3f4e185f0fe3.Date
+
+relationship 54d73560-0c29-b1dc-ae03-0661e9d06dc2
+	fromColumn: order_details.Card_Type
+	toColumn: 'Card Type Table'.Card
+
+relationship 0aff24c7-9559-aa55-5a02-49f1e24df99b
+	fromColumn: order_alerts.Card_Type_key
+	toColumn: 'Card Type Table'.Card
+
+relationship 45609894-1b9b-476c-9468-efb762806248
+	joinOnDateBehavior: datePartOnly
+	fromColumn: order_details.'Transaction Date'
+	toColumn: LocalDateTable_f9eeef6a-b881-4ff0-9850-2249c44143f4.Date
+
+relationship 29397cb9-addf-16da-8e73-ad1a2e476702
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: 'CB/Refund Month Parameter'.'CB/Refund Month Parameter Order'
+	toColumn: 'CB/Refund No of Days Parameter'.'CB/Refund Development Parameter Order'
+
+relationship 436eb0ba-aa42-afc1-cdb0-8d6074861a41
+	crossFilteringBehavior: bothDirections
+	fromColumn: Calendar.'Month Year'
+	toColumn: 'Month Year List'.'Month Year'
+
+relationship 4ea94864-0373-a058-412c-77b74e6394cc
+	fromColumn: MID_Performance.'Calendar_Month Year'
+	toColumn: 'Month Year List'.'Month Year'
+
+relationship c3909139-16ae-4fc4-ab70-4acc338264cf
+	joinOnDateBehavior: datePartOnly
+	fromColumn: order_chargebacks.chargeback_date
+	toColumn: LocalDateTable_dd14fec3-5a28-4545-90ef-a96758e2bcaf.Date
+
+relationship ea91c930-ce40-485e-8d57-c02319a70606
+	joinOnDateBehavior: datePartOnly
+	fromColumn: order_details.chargeback_date
+	toColumn: LocalDateTable_319ba1a4-6f85-46d3-a32e-5c2fd935dc79.Date
+
+relationship 0531e463-1353-9c3f-48b2-6cef4b522c37
+	isActive: false
+	fromColumn: order_details.chargeback_date_final
+	toColumn: Calendar.Date
+
+relationship ed7c0d65-2cc3-41ad-bf76-d5884e43cb1b
+	joinOnDateBehavior: datePartOnly
+	fromColumn: order_details.alert_date
+	toColumn: LocalDateTable_ea2093be-f8d7-44df-a923-bba469798d59.Date
+
+relationship 16624178-5476-2262-53be-cc73a3c7a8ca
+	isActive: false
+	fromColumn: order_details.'New Refund/Void Date'
+	toColumn: Calendar.Date
+
+relationship 8267e82c-d8bd-72d3-ea05-339de8cf4f0f
+	fromColumn: SMZ_Profitability.Date
+	toColumn: Calendar.Date
+
+relationship bf3e9988-ac23-5b65-3999-0fd7c56af9ff
+	fromColumn: SMZ_Profitability.campaign_id
+	toColumn: campaigns.campaign_id
+
+relationship 0e411545-ab35-abb0-635e-396c64b271a7
+	fromColumn: SMZ_Profitability.product_id
+	toColumn: products.product_id
+
+relationship d15437ac-a094-e337-e6a2-9ef387273d47
+	fromColumn: SMZ_Profitability.gateway_id
+	toColumn: payments.gateway_id
+
+relationship 294ff98f-5bc6-77e7-88db-f6e99a40f9ab
+	fromColumn: SMZ_Profitability.BIN
+	toColumn: bin_lookup.BIN
+
+relationship 308a272a-46e7-9e34-5ce0-30a407694908
+	fromColumn: SMZ_Profitability.order_total
+	toColumn: PricePoint.order_total
+
+relationship 57d0cab6-764f-2208-d8d6-8031949e8bdc
+	fromColumn: order_alerts.Campaign_id
+	toColumn: campaigns.campaign_id
+
+relationship 8faffc47-c29b-3039-a18c-a880b50e3f73
+	fromColumn: order_alerts.GatewayID
+	toColumn: payments.gateway_id
+
+relationship f4d336c4-249d-f636-599e-7d262a16aa93
+	fromColumn: order_alerts.card_bin
+	toColumn: bin_lookup.BIN
+
+relationship cdba1681-39b6-7fa6-6d9a-c81c4bdf515c
+	fromColumn: order_alerts.Product_ID
+	toColumn: products.product_id
+
+relationship bbaa0fd8-eaea-b6a4-d1ae-5f24af056a9e
+	fromColumn: order_alerts.'Price Point'
+	toColumn: PricePoint.order_total
+
+relationship 5960c502-9cf4-a846-0e3e-f704eb018a5d
+	fromColumn: order_alerts.affid
+	toColumn: AffID.affid
+
+relationship 742dc5d7-17a8-fca0-003c-8d6460a9d679
+	fromColumn: order_alerts.sub_affid
+	toColumn: Sub_AffID.sub_affid
+
+relationship d25455ff-0f05-7d3f-8296-51193e4e2d3e
+	fromColumn: order_alerts.'Billing Cycle'
+	toColumn: BillingCycle.'Billing Cycle'
+
+relationship a64a4d51-e11a-0ee6-2e7e-d494b4c5744d
+	fromColumn: SMZ_Profitability.'Billing Cycle'
+	toColumn: BillingCycle.'Billing Cycle'
+
+relationship 347cfc98-b1f6-6195-0cc6-600178cebe27
+	fromColumn: SMZ_Profitability.affid
+	toColumn: AffID.affid
+
+relationship 9e508d21-fa95-5975-2c07-65f91638cff9
+	fromColumn: SMZ_Profitability.sub_affid
+	toColumn: Sub_AffID.sub_affid
+
+relationship e2011ba6-89f6-3ddf-6b20-f00903cbab5c
+	fromColumn: SMZ_Profitability.'Attempt Count'
+	toColumn: AttemptCount.'Attempt Count'
+
+relationship cf4a0239-bdd8-0204-1c86-e58777142b2b
+	fromColumn: order_alerts.'Attempt Count'
+	toColumn: AttemptCount.'Attempt Count'
+
+relationship c0750595-b045-ceb8-9b09-0f88f834c291
+	isActive: false
+	fromColumn: order_alerts.transaction_date
+	toColumn: Calendar.Date
+
+relationship f89c45b7-88dc-0c0e-4fc0-6e9b77febf40
+	isActive: false
+	fromColumn: order_alerts.'Trial Date'
+	toColumn: Calendar.Date
+

@@ -1,0 +1,52 @@
+table 'Retention Selection'
+	lineageTag: 714a3d68-635b-437f-963a-50405d8996a6
+
+	column Parameter
+		lineageTag: 459bfff9-48e1-4d3e-bc3d-419600eaf879
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Parameter Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Parameter Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parameter Fields'
+		isHidden
+		lineageTag: 543b7bd7-2a54-4e09-a8b0-9760007c4bbf
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Parameter Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parameter Order'
+		isHidden
+		formatString: 0
+		lineageTag: 937dc164-b79e-43e0-b125-ace607636999
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Retention Selection' = calculated
+		mode: import
+		source =
+				{
+				    ("% Initials", NAMEOF('order_details'[% Retention Initials]), 0),
+				    ("Cycle 1", NAMEOF('order_details'[% Retention Cycle 1]), 1),
+				    ("Cycle 2", NAMEOF([% RC 2 Toggle]), 2),
+				    ("Cycle 3", NAMEOF([% RC 3 Toggle]), 3),
+				    ("Cycle 4", NAMEOF([% RC 4 Toggle]), 4),
+				    ("Cycle 5", NAMEOF([% RC 5 Toggle]), 5)
+				}
+
+	annotation PBI_Id = 3d4d28b7d4224b34942f95b49b6f1955
+

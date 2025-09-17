@@ -1,0 +1,31 @@
+table 'Reserve $'
+	lineageTag: 09f3c321-c563-4577-a9ef-65dd35439c61
+
+	measure 'Reserve $' = MIN('Reserve $'[Value])
+		formatString: 0.0
+		lineageTag: ceab0713-3192-4af6-8791-d199c63cb8fa
+
+	column Value
+		dataType: double
+		lineageTag: aedddf3e-0559-4e9b-a3aa-64a873f40179
+		summarizeBy: sum
+		sourceColumn: Value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition 'Reserve $' = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database(server, Database),
+				    beast_insights_v2_generic_series = Source{[Schema="beast_insights_v2",Item="generic_series"]}[Data],
+				    #"Renamed Columns" = Table.RenameColumns(beast_insights_v2_generic_series,{{"number", "Value"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

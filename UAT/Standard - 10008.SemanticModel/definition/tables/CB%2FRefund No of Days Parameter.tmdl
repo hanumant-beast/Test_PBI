@@ -1,0 +1,47 @@
+table 'CB/Refund No of Days Parameter'
+	lineageTag: bef2a8ef-e403-4d02-8dc8-ebd484f2a90e
+
+	column 'CB/Refund Development Parameter'
+		lineageTag: f1c395b2-340e-4a26-b498-7c31ed746188
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'CB/Refund Development Parameter Order'
+
+		relatedColumnDetails
+			groupByColumn: 'CB/Refund Development Parameter Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'CB/Refund Development Parameter Fields'
+		lineageTag: 7ea014d8-f232-47be-8432-9e04704ec610
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'CB/Refund Development Parameter Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'CB/Refund Development Parameter Order'
+		formatString: 0
+		lineageTag: da55d7e0-fbb8-452b-842f-efe84cea05f5
+		summarizeBy: none
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'CB/Refund No of Days Parameter' = calculated
+		mode: import
+		source =
+				{
+				    ("# Days to Hit CB", NAMEOF('order_details'[No of Days]), 0),
+				    ("# Days to Hit Refund CS", NAMEOF('order_details'[No of Days (Refund)]), 1),
+				    ("# Days to Hit Refund Alert", NAMEOF('order_details'[No of Days (Refund)]), 2)
+				}
+
+	annotation PBI_Id = bbd11c9f5f634c0ca17bf6f56dea030c
+

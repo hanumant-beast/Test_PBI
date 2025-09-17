@@ -1,0 +1,49 @@
+table 'Date Selection'
+	lineageTag: a20864d3-616e-4344-8698-61bfc6fbf8f5
+
+	column 'Date Selection'
+		lineageTag: 5493cd09-b439-4da6-8d18-571c0410bc6a
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Date Selection Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Date Selection Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Date Selection Fields'
+		isHidden
+		lineageTag: 7a4529ec-8f2b-4f39-9404-109f92d723da
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Date Selection Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Date Selection Order'
+		isHidden
+		formatString: 0
+		lineageTag: 298b7c81-0937-4ee6-988d-24dd40e61c19
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Date Selection' = calculated
+		mode: import
+		source =
+				{
+				    ("Month", NAMEOF('Calendar'[Month Year]), 2),
+				    ("Week", NAMEOF('Calendar'[Week Range]), 1),
+				    ("Day", NAMEOF('Calendar'[Date]), 0)
+				}
+
+	annotation PBI_Id = d097db1acfe94dd5841274a4a4ee1d65
+

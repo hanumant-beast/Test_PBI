@@ -1,0 +1,42 @@
+table WaterfallCategories
+	lineageTag: 66d85d8a-b8f7-455b-98a5-825e29a628da
+
+	column Category
+		lineageTag: 426f1d90-9076-41e1-9230-a74e513bac84
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Category]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Order
+		formatString: 0
+		lineageTag: f3c44ce6-6f41-4b49-95f7-3e7973b8b35c
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Order]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition WaterfallCategories = calculated
+		mode: import
+		source = ```
+				
+				DATATABLE(
+				    "Category", STRING,
+				    "Order", INTEGER,
+				    {
+				        {"Revenue", 1},
+				        {"CPA Cost", 2},
+				        {"Product Cost", 3},
+				        {"Alert Cost", 4},
+				        {"CB", 5},
+				        {"Refund", 6},
+				        {"Fees", 7}
+				    }
+				)
+				
+				```
+
+	annotation PBI_Id = e8b962e319b04fbb86487c1bea398321
+

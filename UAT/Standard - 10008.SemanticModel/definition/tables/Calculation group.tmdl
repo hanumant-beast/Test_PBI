@@ -1,0 +1,83 @@
+table 'Calculation group'
+	lineageTag: f8e90088-1832-410f-af92-c3ec07df9de7
+
+	calculationGroup
+
+		calculationItem YTD = CALCULATE(SELECTEDMEASURE(),DATESYTD('Calendar'[Date]))
+
+		calculationItem MTD = CALCULATE(SELECTEDMEASURE(),DATESMTD('Calendar'[Date]))
+
+		calculationItem QTD = CALCULATE(SELECTEDMEASURE(),DATESQTD('Calendar'[Date]))
+
+		calculationItem PreviousPeriod =
+				
+				VAR SelectedStartDate = MIN('Calendar'[Date])
+				VAR SelectedEndDate = MAX('Calendar'[Date])
+				VAR DaysInSelectedPeriod = DATEDIFF(SelectedStartDate, SelectedEndDate, DAY) + 1
+				VAR PreviousPeriodStartDate = SelectedStartDate - DaysInSelectedPeriod
+				VAR PreviousPeriodEndDate = SelectedEndDate - DaysInSelectedPeriod
+				RETURN
+				CALCULATE(
+				    SELECTEDMEASURE(),
+				    FILTER(
+				        ALL('Calendar'[Date]),
+				        'Calendar'[Date] >= PreviousPeriodStartDate &&
+				        'Calendar'[Date] <= PreviousPeriodEndDate
+				    )
+				)
+
+		calculationItem 'PP %' =
+				VAR SelectedStartDate = MIN('Calendar'[Date])
+				VAR SelectedEndDate = MAX('Calendar'[Date])
+				VAR DaysInSelectedPeriod = DATEDIFF(SelectedStartDate, SelectedEndDate, DAY) + 1
+				VAR PreviousPeriodStartDate = SelectedStartDate - DaysInSelectedPeriod
+				VAR PreviousPeriodEndDate = SelectedEndDate - DaysInSelectedPeriod
+				RETURN
+				DIVIDE(SELECTEDMEASURE(),CALCULATE(
+				    SELECTEDMEASURE(),
+				    FILTER(
+				        ALL('Calendar'[Date]),
+				        'Calendar'[Date] >= PreviousPeriodStartDate &&
+				        'Calendar'[Date] <= PreviousPeriodEndDate
+				    )
+				),0)-1
+
+			formatStringDefinition = "+0.0%;-0.0%;0%"
+
+		calculationItem 'PreviousPeriod Difference' =
+				
+				VAR SelectedStartDate = MIN('Calendar'[Date])
+				VAR SelectedEndDate = MAX('Calendar'[Date])
+				VAR DaysInSelectedPeriod = DATEDIFF(SelectedStartDate, SelectedEndDate, DAY) + 1
+				VAR PreviousPeriodStartDate = SelectedStartDate - DaysInSelectedPeriod
+				VAR PreviousPeriodEndDate = SelectedEndDate - DaysInSelectedPeriod
+				RETURN
+				SELECTEDMEASURE() - CALCULATE(
+				    SELECTEDMEASURE(),
+				    FILTER(
+				        ALL('Calendar'[Date]),
+				        'Calendar'[Date] >= PreviousPeriodStartDate &&
+				        'Calendar'[Date] <= PreviousPeriodEndDate
+				    )
+				)
+
+			formatStringDefinition = "+0.0%;-0.0%;0%"
+
+	column 'Calculation group column'
+		dataType: string
+		lineageTag: 2fa9700f-1f92-4d73-ae06-9985840ce5aa
+		summarizeBy: none
+		sourceColumn: Name
+		sortByColumn: Ordinal
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ordinal
+		dataType: int64
+		formatString: 0
+		lineageTag: 6a2f6999-d25f-4b49-ae7d-cd9218a93b10
+		summarizeBy: sum
+		sourceColumn: Ordinal
+
+		annotation SummarizationSetBy = Automatic
+

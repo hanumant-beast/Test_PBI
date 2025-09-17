@@ -1,0 +1,161 @@
+table Calendar
+	lineageTag: c8714cd5-a4f2-45b6-b875-5a4241833ea7
+
+	column Date
+		formatString: mm/dd/yyyy
+		lineageTag: b071a3d7-efa0-42f7-b84e-fd6c4368e999
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		variation Variation
+			isDefault
+			relationship: b700a799-118f-4b39-b745-38a67d0d20e8
+			defaultHierarchy: LocalDateTable_5a637f4d-17e5-4acc-aa4e-3f4e185f0fe3.'Date Hierarchy'
+
+		changedProperty = FormatString
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column Month = FORMAT('Calendar'[DATE], "mmm")
+		lineageTag: d9fb38e0-254f-4c1f-8088-e46af8521a61
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month_Number = ```
+			MONTH('Calendar'[Date])
+			
+			```
+		isHidden
+		formatString: 0
+		lineageTag: 022b56b4-cb82-496d-a7b6-680963a0aa00
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quarter = ```
+			"Q" & INT(FORMAT('Calendar'[Date], "q"))
+			
+			```
+		lineageTag: c510f028-5381-4e87-a335-cd3b21ba827d
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Week Day' = ```
+			FORMAT('Calendar'[Date], "dddd")
+			
+			```
+		lineageTag: 423f06bf-6c7a-41e9-abfa-f0565b9d9b8b
+		summarizeBy: none
+		sortByColumn: Weekday_Number
+
+		annotation SummarizationSetBy = Automatic
+
+	column Weekday_Number = ```
+			WEEKDAY('Calendar'[Date])
+			
+			```
+		isHidden
+		formatString: 0
+		lineageTag: 8c0f3d89-0ca7-45f9-8609-4009920b460b
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year = ```
+			YEAR('Calendar'[Date])
+			
+			```
+		formatString: 0
+		lineageTag: b7f090e8-7960-44ce-bd40-d6e43329c84f
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Year' = ```
+			FORMAT('Calendar'[Date], "mmm" ) & " " & YEAR('Calendar'[Date])
+			
+			```
+		lineageTag: 3379656f-3326-4e70-8941-b116f8693874
+		summarizeBy: none
+		sortByColumn: Year_Month_Number
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year_Month_Number = ```
+			YEAR('Calendar'[Date])*100+MONTH('Calendar'[Date])
+			
+			```
+		isHidden
+		formatString: 0
+		lineageTag: 13b92962-60ef-48bf-8f75-32fdbd284232
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Week Range' = ```
+			FORMAT('Calendar'[Date] - WEEKDAY('Calendar'[Date],2) + 1, "MM/DD/YY") & " - " & 
+			FORMAT('Calendar'[Date] - WEEKDAY('Calendar'[Date],2) + 7, "MM/DD/YY")
+			```
+		lineageTag: e7ffd464-e73b-4d8f-b933-476b30f9d0cf
+		summarizeBy: none
+		sortByColumn: Week_Start_Date
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column Week_Start_Date = ```
+			'Calendar'[Date] -  WEEKDAY('Calendar'[Date],2)+1
+			
+			```
+		dataType: dateTime
+		isHidden
+		formatString: m/d/yyyy
+		lineageTag: 006ec545-908f-49d1-88c7-57b566bfd4ef
+		summarizeBy: none
+
+		variation Variation
+			isDefault
+			relationship: 88e97fae-3dd6-4eff-afd0-1314c41292e2
+			defaultHierarchy: LocalDateTable_f03d4fb8-037b-4eb4-955e-314f261bddc2.'Date Hierarchy'
+
+		changedProperty = DataType
+
+		changedProperty = FormatString
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column 'Current Month' = IF('Calendar'[Year_Month_Number]<=YEAR(TODAY())*100+MONTH(TODAY()),"Y","N")
+		lineageTag: 953c14c3-4c3a-4780-bc39-4a986eb2a403
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_current_month = IF(MONTH(MAX('Calendar'[Date]))='Calendar'[Month_Number] && YEAR(MAX('Calendar'[Date]))= 'Calendar'[Year] , TRUE(), FALSE())
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: e78e2455-6427-4e55-9d12-b3e2ed5e5fb1
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Calendar-f8955b89-65ca-4e5c-87a1-ee8a787204a6 = calculated
+		mode: import
+		source =
+				CALENDAR(
+				                DATE(YEAR(MIN(order_details[DATE_OF_SALE])),1,1),
+				                MAX(order_details[DATE_OF_SALE])
+				)
+
+	annotation PBI_Id = d9433b0eaf5c4ab8a6fef2743b7ae532
+

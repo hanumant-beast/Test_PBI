@@ -1,0 +1,34 @@
+table 'Processing Fee % Parameter'
+	lineageTag: 0ad7c980-64fe-4cee-9084-7e84fd2de1d5
+
+	measure 'Processing Fees % Value' =
+			
+			MIN('Processing Fee % Parameter'[Value])
+			// SELECTEDVALUE('Processing Fee % Parameter'[Value], 12)
+		formatString: 0.0
+		lineageTag: 8891c046-7f08-4661-baf2-510b0fee14ba
+
+	column Value
+		dataType: double
+		lineageTag: cac94c96-d13c-4a17-87cd-445e0239dc92
+		summarizeBy: sum
+		sourceColumn: Value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition 'Processing Fee % Parameter' = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database(server, Database),
+				    beast_insights_v2_generic_series = Source{[Schema="beast_insights_v2",Item="generic_series"]}[Data],
+				    #"Renamed Columns" = Table.RenameColumns(beast_insights_v2_generic_series,{{"number", "Value"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

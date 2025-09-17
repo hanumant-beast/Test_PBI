@@ -1,0 +1,60 @@
+table order_chargebacks
+	lineageTag: ec1bc440-b973-406c-960f-868eba2c1c26
+
+	column order_id
+		dataType: string
+		lineageTag: 38a4580f-af7f-484f-9183-8046425c7585
+		summarizeBy: none
+		sourceColumn: order_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column transaction_amount
+		dataType: double
+		lineageTag: f759db31-2a65-40f3-811a-6466e30051f0
+		summarizeBy: sum
+		sourceColumn: transaction_amount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column chargeback_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: ab405d90-9531-443b-a5f3-ada18b2bc35c
+		summarizeBy: none
+		sourceColumn: chargeback_date
+
+		variation Variation
+			isDefault
+			relationship: c3909139-16ae-4fc4-ab70-4acc338264cf
+			defaultHierarchy: LocalDateTable_dd14fec3-5a28-4545-90ef-a96758e2bcaf.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column reason_code
+		dataType: string
+		lineageTag: 3f3b0b2d-cf3e-43c9-ba2b-1da1e832592c
+		summarizeBy: none
+		sourceColumn: reason_code
+
+		annotation SummarizationSetBy = Automatic
+
+	partition order_chargebacks = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database(server, Database),
+				    public_order_alerts = Source{[Schema="public",Item="order_chargebacks"]}[Data],
+				    #"Filtered Rows" = Table.SelectRows(public_order_alerts, each [client_id] = client_id),
+				    #"Removed Other Columns" = Table.SelectColumns(#"Filtered Rows",{"chargeback_date", "order_id", "transaction_amount", "reason_code"})
+				in
+				    #"Removed Other Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Exception
+

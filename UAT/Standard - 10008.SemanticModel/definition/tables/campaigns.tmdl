@@ -1,0 +1,116 @@
+table campaigns
+	lineageTag: 36e4d921-1ccb-4e38-b455-df8c0cfb3aa1
+
+	column campaign_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 45ec0148-cf45-4c35-930c-1efd185dbe18
+		summarizeBy: none
+		sourceColumn: campaign_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column Campaign
+		dataType: string
+		lineageTag: 8a033c9b-1d4f-4406-a669-21e54eab7610
+		summarizeBy: none
+		sourceColumn: Campaign
+
+		annotation SummarizationSetBy = Automatic
+
+	column crm
+		dataType: string
+		lineageTag: 3abd2175-096b-4677-83f2-fdfbb4cd473b
+		summarizeBy: none
+		sourceColumn: crm
+
+		annotation SummarizationSetBy = Automatic
+
+	column client_id
+		dataType: int64
+		formatString: 0
+		lineageTag: ffe548d7-60cf-4a74-9fc5-de44e1951288
+		summarizeBy: sum
+		sourceColumn: client_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column client_name
+		dataType: string
+		lineageTag: 0211182e-06e5-4375-b3ba-e6c7a9e93d9c
+		summarizeBy: none
+		sourceColumn: client_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Campaign Type'
+		dataType: string
+		lineageTag: 36cd2703-649d-4d36-803e-1ae8614623d3
+		summarizeBy: none
+		sourceColumn: Campaign Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column id
+		dataType: int64
+		formatString: 0
+		lineageTag: a3c33047-0dde-46c9-b826-668f0f5074f1
+		summarizeBy: sum
+		sourceColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_exclude
+		dataType: int64
+		formatString: 0
+		lineageTag: ef9d04b5-e4fe-46ad-92e0-8afaee36a1c9
+		summarizeBy: sum
+		sourceColumn: is_exclude
+
+		annotation SummarizationSetBy = Automatic
+
+	column subscription_flag
+		dataType: int64
+		formatString: 0
+		lineageTag: 3d4691fc-80a9-45b9-a0ee-6db93729c51f
+		summarizeBy: sum
+		sourceColumn: subscription_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_campaign_type_filled_with_ai
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 952f010e-7747-43b8-b688-8d5d137990b7
+		summarizeBy: none
+		sourceColumn: is_campaign_type_filled_with_ai
+
+		annotation SummarizationSetBy = Automatic
+
+	column cpa
+		dataType: double
+		lineageTag: 287c0c8c-faa7-4dc7-b022-3da822cfa752
+		summarizeBy: sum
+		sourceColumn: cpa
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition campaigns = m
+		mode: import
+		source =
+				let
+				        Source = PostgreSQL.Database(server, Database),
+				    public_campaigns = Source{[Schema="public",Item="campaigns"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(#"public_campaigns",{{"campaign_id", Int64.Type}, {"campaign_name", type text}, {"crm", type text}, {"client_id", Int64.Type}, {"client_name", type text}}),
+				    #"Filtered Rows" = Table.SelectRows(#"Changed Type", each [crm] = crm or [crm] = crm2 or [crm] = crm3  or [crm] = crm4),
+				    #"Filtered Rows1" = Table.SelectRows(#"Filtered Rows", each [client_id] = client_id),
+				    #"Renamed Columns" = Table.RenameColumns(#"Filtered Rows1",{{"campaign_name", "Campaign"}, {"campaign_type", "Campaign Type"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Exception
+
+	annotation PBI_NavigationStepName = Navigation
+

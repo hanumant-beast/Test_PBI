@@ -1,0 +1,33 @@
+table 'CB/Refund Date'
+	lineageTag: d3d51d3a-3833-433f-a6f0-9a7fcdc266c8
+
+	column Parameter
+		dataType: string
+		lineageTag: b0a6809b-d173-4d30-8dc4-a5e60866a163
+		summarizeBy: none
+		sourceColumn: Parameter
+
+		annotation SummarizationSetBy = Automatic
+
+	column Serial
+		dataType: int64
+		formatString: 0
+		lineageTag: 7322a570-0b81-497d-820c-7abe0bdc00fc
+		summarizeBy: sum
+		sourceColumn: Serial
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'CB/Refund Date' = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45W8i9KSS1ScEksSVXSUTJUitWJVnJ20g9KTSvNS4EJG4GFPfMySzITc2CCxkqxsQA=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Parameter = _t, Serial = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Parameter", type text}, {"Serial", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Exception
+
+	annotation PBI_NavigationStepName = Navigation
+

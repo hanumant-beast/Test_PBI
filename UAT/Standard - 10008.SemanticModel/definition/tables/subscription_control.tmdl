@@ -1,0 +1,289 @@
+table subscription_control
+	lineageTag: 99253d98-be8c-4aa5-a214-214e8d8b82b9
+
+	measure 'In-Queue Rev' = ```
+			
+			CALCULATE(
+			    SUM(subscription_control[in-queue_revenue]),
+			    FILTER(
+			        ALLEXCEPT(subscription_control,subscription_control[current_gw],payments[gateway_alias]),
+			        subscription_control[status] = "In-Queue" && 
+			        subscription_control[Process_at] >= TODAY() && 
+			        subscription_control[Process_at] <= EOMONTH(TODAY(),0) 
+			    )
+			)
+			```
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 9b0b18fe-fed9-4be7-8e0b-26c1e6f2c718
+
+	measure 'CAP Limit' = SUM(payments[monthly_cap])
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 60a220cc-deeb-44d2-a86f-90218a04e76a
+
+	measure 'CAP Availalbe' = [CAP Limit] - [$ Revenue]-[In-Queue Rev]
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 78773c7a-a238-4df2-a23e-6d774bbd7f9c
+
+	measure '% Initials' = DIVIDE([Initials],[# Approvals])
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 3af8acb2-323d-4d39-a104-4367f1bd6f32
+
+	measure '% Rebills' = DIVIDE([Rebills],[# Approvals])
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 5e523a46-fa24-4ccf-89b3-e6c0d364b299
+
+	measure 'Total Volume Used' = [In-Queue Rev]+[$ Revenue]
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 66a400b0-9333-4441-94c3-a4840def35b0
+
+	measure 'Max CAP Available' = [$ Revenue]-[In-Queue Rev]
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: c6f37fd6-794b-4619-84cf-c742676c773e
+
+	measure 'In-Queue Rev Next Month' = ```
+			
+			CALCULATE(
+			    SUM(subscription_control[in-queue_revenue]),
+			    FILTER(
+			        ALLEXCEPT(subscription_control, subscription_control[current_gw], payments[gateway_alias]),
+			        subscription_control[status] = "In-Queue" &&
+			        subscription_control[Process_at] >= DATE(YEAR(TODAY()), MONTH(TODAY()) + 1, 1) &&
+			        subscription_control[Process_at] <= EOMONTH(TODAY(), 1)
+			    )
+			)
+			
+			
+			```
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: c98db20b-2c3d-44db-9033-57260ff1a8aa
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'In-Queue Orders' = ```
+			
+			CALCULATE(
+			    COUNT(subscription_control[client_id]),
+			    FILTER(
+			        ALLEXCEPT(subscription_control,subscription_control[current_gw],payments[gateway_alias]),
+			        subscription_control[status] = "In-Queue" && 
+			        subscription_control[Process_at] >= TODAY() && 
+			        subscription_control[Process_at] <= EOMONTH(TODAY(),0) 
+			    )
+			)
+			```
+		formatString: #,0
+		lineageTag: 387113fb-e440-4905-b132-a48ce9aadd86
+
+	measure 'In-Queue Orders Next Month' = ```
+			
+			CALCULATE(
+			    COUNT(subscription_control[client_id]),
+			    FILTER(
+			        ALLEXCEPT(subscription_control, subscription_control[current_gw], payments[gateway_alias]),
+			        subscription_control[status] = "In-Queue" &&
+			        subscription_control[Process_at] >= DATE(YEAR(TODAY()), MONTH(TODAY()) + 1, 1) &&
+			        subscription_control[Process_at] <= EOMONTH(TODAY(), 1)
+			    )
+			)
+			
+			
+			```
+		formatString: #,0
+		lineageTag: d2f396ce-1983-4f77-89c3-bd7cc734fdc6
+
+	column id
+		dataType: int64
+		formatString: 0
+		lineageTag: d9fc8ca3-de68-4367-9d71-363e9818d598
+		summarizeBy: sum
+		sourceColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	column control_id
+		dataType: int64
+		formatString: 0
+		lineageTag: dced4fe1-c677-484f-99ce-67515e0e5c7f
+		summarizeBy: sum
+		sourceColumn: control_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column client_id
+		dataType: int64
+		formatString: 0
+		lineageTag: f90856ce-7db2-44fc-9ec7-ff5aacf16926
+		summarizeBy: none
+		sourceColumn: client_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column parent_order_id
+		dataType: string
+		lineageTag: 06202ab0-6fc7-4710-a40c-c49567a29151
+		summarizeBy: none
+		sourceColumn: parent_order_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column new_order_id
+		dataType: string
+		lineageTag: ebf68a2b-e243-4124-b582-546eafc2eca9
+		summarizeBy: none
+		sourceColumn: new_order_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column status
+		dataType: string
+		lineageTag: 7f2e7faa-0630-4bc1-8f10-6bd75820d1b9
+		summarizeBy: none
+		sourceColumn: status
+
+		annotation SummarizationSetBy = Automatic
+
+	column attempted_at
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: f7ca6108-38e0-4c6e-ae70-322870725d42
+		summarizeBy: none
+		sourceColumn: attempted_at
+
+		variation Variation
+			isDefault
+			relationship: 3147a526-e64c-44d3-82ca-e15a75a30ea1
+			defaultHierarchy: LocalDateTable_0d198ef9-cc15-4385-a582-2f6ff4729a04.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column assign_gateway
+		dataType: int64
+		formatString: 0
+		lineageTag: a6f2c6c2-0799-45f7-9d64-90ca90611e63
+		summarizeBy: sum
+		sourceColumn: assign_gateway
+
+		annotation SummarizationSetBy = Automatic
+
+	column force_gateway
+		dataType: int64
+		formatString: 0
+		lineageTag: 0411892b-7589-4ac7-96de-9974582571d8
+		summarizeBy: sum
+		sourceColumn: force_gateway
+
+		annotation SummarizationSetBy = Automatic
+
+	column Unique_Key = LOOKUPVALUE(order_details[Unique_Key],order_details[order_id],subscription_control[parent_order_id])
+		lineageTag: 2893e67b-8b25-449e-b534-7427984e01ad
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column current_gw = IF(subscription_control[force_gateway]<>BLANK(),subscription_control[force_gateway],subscription_control[assign_gateway])
+		formatString: 0
+		lineageTag: 5644fc93-cad6-4a4c-88c8-9f98e831504b
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column current_cycle =
+			
+			var currentcycle = CALCULATE(MAX(order_details[Cycle]),FILTER(order_details,order_details[Unique_Key]=EARLIER(subscription_control[Unique_Key])))
+			RETURN IF(currentcycle>=6,6,currentcycle)
+		formatString: 0
+		lineageTag: 8430670f-014f-4321-b513-642f4c2b05f3
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column current_attempt =
+			
+			var currentattempts = CALCULATE(MAX(order_details[Attempt Count]),FILTER(order_details,order_details[Unique_Key]=EARLIER(subscription_control[Unique_Key])))+1
+			RETURN IF(currentattempts>=6,6,currentattempts)
+		lineageTag: 44ab51ce-a82d-48cb-8afa-598db003ccb5
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column approval_rate =
+			
+			var a = LOOKUPVALUE(approval_rate[Approval_Rate],approval_rate[Cycle],subscription_control[current_cycle],approval_rate[Attempt],subscription_control[current_attempt])
+			var b = CALCULATE(AVERAGE(approval_rate[Approval_Rate]),FILTER(approval_rate,approval_rate[Cycle]=subscription_control[current_cycle]))
+			var c = AVERAGE(approval_rate[Approval_Rate])
+			RETURN IF(a<>BLANK(),a,IF(b<>BLANK(),b,c))
+		formatString: 0.00
+		lineageTag: d95529c4-f7b1-4774-ac2d-9d1ff2875e72
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column current_pricepoint =
+			
+			var maxordertotal = CALCULATE(MAX(order_details[order_total]),FILTER(order_details,order_details[order_id]=subscription_control[max_oid]))
+			var avgordertotal = CALCULATE(AVERAGE(order_details[order_total]),FILTER(order_details,order_details[Cycle]>=1&&order_details[order_total]<>BLANK()))
+			RETURN IF(subscription_control[current_cycle]=0,avgordertotal,IF(subscription_control[current_cycle]<>0,maxordertotal,maxordertotal))
+		formatString: 0.00
+		lineageTag: 1205affe-7203-4bd4-9652-1ef80fb52578
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column max_oid = CALCULATE(MAX(order_details[order_id]),FILTER(order_details,order_details[DateTimeKey]=subscription_control[max_datetimekey]))
+		lineageTag: 96952d6c-40ab-428c-8f16-aa56857a3f65
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column in-queue_revenue = 1*subscription_control[approval_rate]*subscription_control[current_pricepoint]
+		formatString: 0.00
+		lineageTag: 92f782c7-fbfb-4c0c-86df-574d158aabef
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column max_datetimekey = CALCULATE(MAX(order_details[DateTimeKey]),FILTER(order_details,order_details[Unique_Key]=subscription_control[Unique_Key]))
+		formatString: 0
+		lineageTag: a44dccb9-0600-4c3e-89cf-47d15dfa2ddf
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column process_at
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 3b7d5719-d1ea-4bb1-aef7-b5a8ec50c3c7
+		summarizeBy: none
+		sourceColumn: process_at
+
+		variation Variation
+			isDefault
+			relationship: 3c489922-5312-47ab-81b0-2769a2428a2e
+			defaultHierarchy: LocalDateTable_c09cf899-8442-4b30-bdec-0a4b2e9bbdc3.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition subscription_control = m
+		mode: import
+		source =
+				let
+				    Source = Value.NativeQuery(PostgreSQL.Database(server, Database), "Select * from public.subscription_control", null, [EnableFolding=true]),
+				    #"Filtered Rows" = Table.SelectRows(Source, each [client_id] = client_id),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Filtered Rows",{{"attempted_at", type date}}),
+				    #"Minus 5 hrs" = Table.AddColumn(#"Changed Type", "Adjusted Time", each [#"process_at"] - #duration(0,5,0,0), type datetime),
+				    #"Renamed Columns" = Table.RenameColumns(#"Minus 5 hrs",{{"process_at", "process_at_crm"}, {"Adjusted Time", "process_at"}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Renamed Columns",{"process_at_crm"}),
+				    #"Extracted Date" = Table.TransformColumns(#"Removed Columns",{{"process_at", DateTime.Date, type date}})
+				in
+				    #"Extracted Date"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Exception
+
