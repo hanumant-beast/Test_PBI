@@ -319,6 +319,17 @@
     },
     {
       "config": "{}",
+      "displayName": "Page 3",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720.00,
+      "name": "6b8cb799548d3f27bdd6",
+      "ordinal": 14,
+      "visualContainers": [],
+      "width": 1280.00
+    },
+    {
+      "config": "{}",
       "displayName": "MID Snapshot",
       "displayOption": 2,
       "filters": "[{\"name\":\"40a115772a61d717942e\",\"expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Entity\":\"Calendar\"}},\"Property\":\"Month Year\"}},\"type\":\"Categorical\",\"howCreated\":1,\"objects\":{}},{\"name\":\"bc3d2a7ca1a2b3b5a16c\",\"expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Entity\":\"Calendar\"}},\"Property\":\"is_current_month\"}},\"type\":\"Categorical\",\"howCreated\":1,\"objects\":{}}]",
@@ -559,6 +570,15 @@
           "x": 10.00,
           "y": 0.00,
           "z": 0.00
+        },
+        {
+          "config": "{\"name\":\"cc1e59573bb17efdbd5d\",\"layouts\":[{\"id\":0,\"position\":{\"x\":10,\"y\":290,\"width\":280,\"height\":280,\"z\":1,\"tabOrder\":1}}],\"singleVisual\":{\"visualType\":\"tableEx\",\"projections\":{\"Values\":[{\"queryRef\":\"BillingCycle.Billing Cycle\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"b\",\"Entity\":\"BillingCycle\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"b\"}},\"Property\":\"Billing Cycle\"},\"Name\":\"BillingCycle.Billing Cycle\",\"NativeReferenceName\":\"Billing Cycle\"}]},\"drillFilterOtherVisuals\":true}}",
+          "filters": "[]",
+          "height": 280.00,
+          "width": 280.00,
+          "x": 10.00,
+          "y": 290.00,
+          "z": 1.00
         }
       ],
       "width": 1280.00
